@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Install Spex - Spex</title>
+  <link rel="stylesheet" href="style.css?modified=2024-10-29">
+  <link rel="shortcut icon" type="image/png" href="asset/spex.png">
+  <script data-goatcounter="https://spex-lang.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<header class=box>
+  <nav id="navbar" class="menu">
+    <a href="index.html"><img class="logo" src="asset/spex.png" alt="Spex glasses">Spex</a>
+    <a href="install.html">Install</a>
+    <a href="community.html">Community</a>
+  </nav>
+  <div class="push">
+    <a href="https://github.com/spex-lang/spex">Code</a>
+  </div>
+</header>
+<noscript>
+  <img src="https://spex-lang.goatcounter.com/count?t=Install Spex - Spex"
+       alt="goatcounter">
+</noscript>
+<main>
+<h1 id="installation">Installation</h1>
+<p>There are two main ways of installing Spex, either from pre-compiled
+binaries or by building the binaries yourself from source.</p>
+<h2 id="from-pre-compiled-binary">From pre-compiled binary</h2>
+<p>The easiest way to get the right pre-compiled binaries for your
+platform is to use the <code>spexup</code> installer as follows.</p>
+<h3 id="automatic">Automatic</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a> <span class="ex">curl</span> <span class="at">--proto</span> <span class="st">&#39;=https&#39;</span> <span class="at">--tlsv1.2</span> <span class="at">-sSf</span> <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   https://raw.githubusercontent.com/spex-lang/spexup/refs/heads/main/spexup <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">|</span> <span class="fu">sh</span></span></code></pre></div>
+<p>What does this do? It <a
+href="https://github.com/spex-lang/spexup/blob/main/spexup">automates</a>
+the manual steps below.</p>
+<h3 id="manual">Manual</h3>
+<p>If you don't like to pipe scripts into a shell (fair enough), you can
+manually install the binaries as follows:</p>
+<ol type="1">
+<li>Go to <a
+href="https://github.com/spex-lang/spex/releases">releases</a>;</li>
+<li>Click on "Assets" for the latest release;</li>
+<li>Download the binaries for your platform and put them into your
+PATH.</li>
+</ol>
+<h2 id="from-source">From source</h2>
+<p>When you build from source you'll need the GHC Haskell compiler and
+the Cabal package system.</p>
+<h3 id="with-nix">With Nix</h3>
+<p>If you got the <a href="https://nixos.org/download/">Nix</a> package
+manager installed then the <code>shell.nix</code> file provides all
+dependencies, and you can simply type:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/spex-lang/spex.git</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> spex</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">nix-shell</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">cabal</span> build all</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">cabal</span> install spex spex-demo-petstore</span></code></pre></div>
+<h3 id="without-nix">Without Nix</h3>
+<p>If you don't use Nix, then the easiest way to get the right Haskell
+dependencies is to first install <a
+href="https://www.haskell.org/ghcup/install/"><code>ghcup</code></a>,
+the <a href="https://www.haskell.org/">Haskell</a> installer, and then
+issue:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/spex-lang/spex.git</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> spex</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ghcup</span> install cabal 3.12.1.0 <span class="at">--set</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ghcup</span> install ghc 9.6.6 <span class="at">--set</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">cabal</span> build all</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">cabal</span> install spex spex-demo-petstore</span></code></pre></div>
+</main>
+</body>
+</html>

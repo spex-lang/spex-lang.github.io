@@ -1,9 +1,14 @@
+#!/usr/bin/env bash
+
+title="${title:-title}"
+
+cat <<EOT
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>The Spex specification language and verifier</title>
+  <title>$title</title>
   <link rel="stylesheet" href="style.css?modified=2024-10-29">
   <link rel="shortcut icon" type="image/png" href="asset/spex.png">
   <script data-goatcounter="https://spex-lang.goatcounter.com/count"
@@ -21,13 +26,8 @@
   </div>
 </header>
 <noscript>
-  <img src="https://spex-lang.goatcounter.com/count?t=The Spex specification language and verifier"
+  <img src="https://spex-lang.goatcounter.com/count?t=$title"
        alt="goatcounter">
 </noscript>
 <main>
-<h1 id="spex">Spex</h1>
-<p>Spex is a specification language and verifier, for more information
-see <a href="https://github.com/spex-lang/spex">GitHub</a>.</p>
-</main>
-</body>
-</html>
+EOT
