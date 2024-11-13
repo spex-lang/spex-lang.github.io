@@ -2,6 +2,8 @@
 
 title="${title:-title}"
 
+escaped_title=$(echo $title | sed 's/ /\+/g')
+
 cat <<EOT
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -26,7 +28,7 @@ cat <<EOT
   </div>
 </header>
 <noscript>
-  <img src="https://spex-lang.goatcounter.com/count?t=$title"
+  <img src="https://spex-lang.goatcounter.com/count?t=$escaped_title"
        alt="goatcounter">
 </noscript>
 <main>
