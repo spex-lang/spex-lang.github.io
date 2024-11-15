@@ -11,7 +11,7 @@ cat <<EOT
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>$title</title>
-  <link rel="stylesheet" href="style.css?modified=2024-11-13">
+  <link rel="stylesheet" href="style.css?modified=2024-11-14">
   <link rel="shortcut icon" type="image/png" href="asset/spex.png">
   <script data-goatcounter="https://spex-lang.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
@@ -20,6 +20,7 @@ cat <<EOT
 <header class=box>
   <nav id="navbar" class="menu">
     <a href="index.html"><img class="logo" src="asset/spex.png" alt="Spex glasses">Spex</a>
+    <a href="tutorial.html">Tutorial</a>
     <a href="install.html">Install</a>
     <a href="community.html">Community</a>
   </nav>
