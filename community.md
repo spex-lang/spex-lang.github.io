@@ -8,7 +8,5 @@ If you got any questions, suggestions for improvements, or just want to say hi,
 then come to our:
 
 - IRC channel [#spex](https://web.libera.chat/#spex) on `irc.libera.chat`;
-- [Zulip](https://spex.zulipchat.com/).
-
-
-
+- [Zulip](https://spex.zulipchat.com/);
+- [GitHub](https://github.com/spex-lang/spex).
