@@ -1,4 +1,6 @@
-all: index.html tutorial.html install.html community.html
+HTML := index.html documentation.html motivation.html tutorial.html install.html community.html
+
+all: $(HTML)
 
 install.md:
 	curl \
@@ -16,6 +18,6 @@ install.md:
 	cat footer.html >> $@
 
 clean:
-	rm -f index.html tutorial.html install.md install.html community.html
+	rm -f $(HTML) install.md
 
 .PHONY: all clean

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Motivation - Spex</title>
+  <link rel="stylesheet" href="style.css?modified=2024-11-14">
+  <link rel="shortcut icon" type="image/png" href="asset/spex.png">
+  <script data-goatcounter="https://spex-lang.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<header class=box>
+  <nav id="navbar" class="menu">
+    <a href="index.html"><img class="logo" src="asset/spex.png" alt="Spex glasses">Spex</a>
+    <a href="documentation.html">Documentation</a>
+    <a href="community.html">Community</a>
+  </nav>
+  <div class="push">
+    <a href="https://github.com/spex-lang/spex">Code</a>
+  </div>
+</header>
+<noscript>
+  <img src="https://spex-lang.goatcounter.com/count?t=Motivation+-+Spex"
+       alt="goatcounter">
+</noscript>
+<main>
+<h1 id="motivation">Motivation</h1>
+<p>Few people write specifications for their software these days. The
+reason for this clear: there are few benefits from doing so, especially
+when taking into account the risk of the specification and the real
+system drifting out of sync (i.e. either the system or the specification
+is changed, but we forget to update the other).</p>
+<p>Spex tries to address this shortcoming of specifications by in
+addition to being a specification language, it's also a verifier that
+checks if some system respects the specification -- thereby always
+ensuring that the two are in sync.</p>
+<p>In the process of testing the real system against the specification
+is will also produce minimal test cases for potential problems it
+notices along the way:</p>
+<ul>
+<li>Non-2xx responses;</li>
+<li>JSON response decoding and type issues;</li>
+<li>Non-reachable APIs.</li>
+</ul>
+<p>(We'll look at examples of how exactly this gets reported in the next
+section on features.)</p>
+<p>In the future we'd like to derive more useful functionality from
+specifications, including:</p>
+<ul>
+<li>Ability to import and export OpenAPI/Swagger, Protobuf, etc. Think
+of how Pandoc can covert between text formats, perhaps we can do the
+same between specifications;</li>
+<li>Generate a prototype implementation from a specification, so that
+you can demo your idea or hand of a working server HTTP API to the
+frontend team before the actual backend is done (without risking that
+there will be a mismatch in the end, since the real backend is tested
+against the same specification as the prototype is derived from);</li>
+<li>A REPL, which allows you to explore a system using a specification.
+Tab completion is provided for the API and random payload data is
+generated on the fly;</li>
+<li>A time traveling debugger which enables you to step forwards and
+backwards through a sequence of API calls, in order to explore how the
+system evolves over time.</li>
+<li>Lua templating (again similar to Pandoc) which enables code
+generation from specifications or the minimal test cases that the
+verifer produces;</li>
+<li>The ability to refine types, e.g.
+<code>{ petId : Int | petId &gt; 0 }</code> and be able to generate
+validation logic from these;</li>
+<li>Generate diagrams for a better overview of how components are
+connected.</li>
+</ul>
+<p>With this future functionality we hope to get to the point where
+there's a clear benefit to writing specifications!</p>
+</main>
+</body>
+</html>

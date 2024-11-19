@@ -1,16 +1,9 @@
-#!/usr/bin/env bash
-
-title="${title:-title}"
-
-escaped_title="$(echo $title | sed 's/ /\+/g')"
-
-cat <<EOT
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>$title</title>
+  <title>Documentation - Spex</title>
   <link rel="stylesheet" href="style.css?modified=2024-11-14">
   <link rel="shortcut icon" type="image/png" href="asset/spex.png">
   <script data-goatcounter="https://spex-lang.goatcounter.com/count"
@@ -28,8 +21,16 @@ cat <<EOT
   </div>
 </header>
 <noscript>
-  <img src="https://spex-lang.goatcounter.com/count?t=$escaped_title"
+  <img src="https://spex-lang.goatcounter.com/count?t=Documentation+-+Spex"
        alt="goatcounter">
 </noscript>
 <main>
-EOT
+<h1 id="documentation">Documentation</h1>
+<ul>
+<li><a href="motivation.html">Why Spex?</a></li>
+<li><a href="tutorial.html">Tutorial</a></li>
+<li><a href="install.html">Installation instructions</a></li>
+</ul>
+</main>
+</body>
+</html>
