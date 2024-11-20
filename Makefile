@@ -1,6 +1,6 @@
 SRC_FILES := $(wildcard src/*.md)
 
-all: src/install.md $(patsubst src/%.md, dist/%.html, $(SRC_FILES)) dist/asset
+all: src/install.md $(patsubst src/%.md, dist/%.html, $(SRC_FILES)) dist/asset dist/style.css
 
 src/install.md:
 	curl \
@@ -22,6 +22,9 @@ dist/%.html: src/%.md
 
 dist/asset:
 	cp -R asset dist/asset
+
+dist/style.css: src/style.css
+	cp src/style.css dist
 
 publish:
 	git subtree push --prefix dist origin gh-pages
