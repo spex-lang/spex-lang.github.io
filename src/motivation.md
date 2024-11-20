@@ -49,3 +49,30 @@ specifications, including:
 
 With this future functionality we hope to get to the point where there's a
 clear benefit to writing specifications!
+
+## Long term
+
+* The long term vision for *Spex* is allow for complete system specifications,
+  rather than mere HTTP JSON API specifications. HTTP API specifications of
+  components in a system captures how the components may be called, but they
+  don't say how the components are related to each other. For example, one
+  obvious thing that's missing is that there can be async message passing
+  between the components. These more complete system specifications open up the
+  potential for other kinds of tooling:
+    - Linters that ensures global consistancy;
+    - More complete documentation with diagrams for visualising how components
+      are connected;
+    - Generation of deployment related code;
+    - Load testing.
+
+* There are many programming languages, but relatively few specification
+  languages. Lab for experimentation and research? Similar to how Haskell lab for PLT?
+
+  By coevolving the language and the tooling, we can add features that will be
+  hard to replicate in OpenAPI, e.g.:
+
+    - Refinement types -- validation logic;
+    - Model definitions -- fakes rather than mocks and better fuzzing.
+
+
+

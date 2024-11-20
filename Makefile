@@ -1,23 +1,36 @@
-HTML := index.html documentation.html motivation.html tutorial.html install.html community.html
+SRC_FILES := $(wildcard src/*.md)
 
-all: $(HTML)
+all: src/install.md $(patsubst src/%.md, dist/%.html, $(SRC_FILES)) dist/asset
 
-install.md:
+src/install.md:
 	curl \
 		--silent \
 		--show-error \
 		--fail \
 		--location \
-		--output install.md \
+		--output src/install.md \
 		https://raw.githubusercontent.com/spex-lang/spex/refs/heads/main/INSTALL.md
 
-%.html: %.md 
+dist/%.html: src/%.md 
 	title="$(shell awk -F ': ' '/title:/ { print $$2 }' $<)" \
-	      ./header.sh > $@
-	pandoc --from gfm --to html5 --syntax-definition spex.xml $< >> $@
-	cat footer.html >> $@
+	      ./src/header.sh > $@
+	pandoc --from gfm --to html5 \
+		--syntax-definition highlight/spex.xml \
+		--syntax-definition highlight/shell.xml \
+		$< >> $@
+	cat src/footer.html >> $@
+
+dist/asset:
+	cp -R asset dist/asset
+
+publish:
+	git subtree push --prefix dist origin gh-pages
 
 clean:
-	rm -f $(HTML) install.md
+	rm -f dist/*.html
+	rm -rf dist/asset
 
-.PHONY: all clean
+distclean: clean
+	rm -f src/install.md
+
+.PHONY: all publish clean distclean

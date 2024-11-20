@@ -168,7 +168,8 @@ h3 {
 }
 
 code, pre > code {
-    background-color: lightyellow;
+    background-color: #2e2e2e;
+    color: white;
     border: 1px;
     border-radius: 8px;
     padding: 1ch;
@@ -203,7 +204,7 @@ p {
 @media screen {
     pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.al { color: lightgreen; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
@@ -214,66 +215,28 @@ code span.cn { color: #880000; } /* Constant */
 code span.co { color: #60a0b0; font-style: italic; } /* Comment */
 code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
 code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: darkmagenta; } /* DataType */
+code span.dt { color: magenta; } /* DataType */
 code span.dv { color: #40a070; } /* DecVal */
 code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
 code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: black; text-decoration: underline; } /* Keyword */
+code span.in { color: cyan; } /* Information */
+code span.kw { color: white; text-decoration: underline; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
-code span.ot { color: black; } /* Other */
+code span.ot { color: white; } /* Other */
 code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: black; } /* SpecialChar */
-code span.ss { color: black; } /* SpecialString */
-code span.st { color: black; } /* String */
+code span.sc { color: white; } /* SpecialChar */
+code span.ss { color: white; } /* SpecialString */
+code span.st { color: white; } /* String */
 code span.va { color: #19177c; } /* Variable */
-code span.vs { color: black; } /* VerbatimString */
+code span.vs { color: white; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 
 
 /* Tufte CSS:
 *
-/* /* Import ET Book styles */
-/*    adapted from https://github.com/edwardtufte/et-book/blob/gh-pages/et-book.css */ */
-/**/
-@font-face {
-    font-family: "et-book";
-    src: url("asset/font/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot");
-    src: url("asset/font/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot?#iefix") format("embedded-opentype"), url("asset/font/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff") format("woff"), url("asset/font/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf") format("truetype"), url("asset/font/et-book/et-book-roman-line-figures/et-book-roman-line-figures.svg#etbookromanosf") format("svg");
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "et-book";
-    src: url("asset/font/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot");
-    src: url("asset/font/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot?#iefix") format("embedded-opentype"),/*  url("asset/font/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff") format("woff"),  url("asset/font/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.ttf") format("truetype"), */ url("asset/font/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.svg#etbookromanosf") format("svg");
-    font-weight: normal;
-    font-style: italic;
-    font-display: swap;
-}
-
-/* @font-face { */
-/*     font-family: "et-book"; */
-/*     src: url("asset/font/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot"); */
-/*     src: url("asset/font/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot?#iefix") format("embedded-opentype"), url("asset/font/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff") format("woff"), url("asset/font/et-book/et-book-bold-line-figures/et-book-bold-line-figures.ttf") format("truetype"), url("asset/font/et-book/et-book-bold-line-figures/et-book-bold-line-figures.svg#etbookromanosf") format("svg"); */
-/*     font-weight: bold; */
-/*     font-style: normal; */
-/*     font-display: swap; */
-/* } */
-
-@font-face {
-    font-family: "et-book-roman-old-style";
-    src: url("asset/font/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot");
-    src: url("asset/font/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot?#iefix") format("embedded-opentype"), url("asset/font/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff") format("woff"), url("asset/font/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.ttf") format("truetype"), url("asset/font/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.svg#etbookromanosf") format("svg");
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
 /**/
 /* /* Tufte CSS styles */ */
 /* html { */

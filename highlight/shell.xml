@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language[
+]>
+<language name="Shell" version="1" kateversion="5.0" section="Sources" extensions="*.bash" author="Stevan A" license="BSD-2Clause">
+  <highlighting>
+    <list name="LogInfo">
+      <item>i </item>
+    </list>
+    <itemDatas>
+      <itemData name="Info"  defStyleNum="dsInfo" spellChecking="false" />
+      <itemData name="Done"  defStyleNum="dsDone" spellChecking="false" />
+    </itemDatas>
+     <contexts>
+      <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text" >
+        <keyword attribute="Info" context="#stay" String="LogInfo" />
+        <RegExpr attribute="Done" context="#stay" String="(?:✓) " />
+      </context>
+    </contexts>
+     <itemDatas>
+      <itemData name="Normal Text" defStyleNum="dsNormal" />
+      <itemData name="Info" defStyleNum="dsInformation" />
+      <itemData name="Done" defStyleNum="dsAlert" />
+    </itemDatas>
+  </highlighting>
+  <general>
+    <comments>
+      <comment name="singleLine" start="#" position="afterwhitespace" />
+    </comments>
+    <keywords casesensitive="1" />
+  </general>
+</language>

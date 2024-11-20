@@ -4,7 +4,7 @@ title: The Spex specification language and verifier
 
 # Spex
 
-Spex is a specification language and verifier for HTTP API servers.
+Spex is a specification language and toolkit for working with HTTP API servers.
 
 Here's an example specification:
 
@@ -31,7 +31,7 @@ the URL respects the specification. In particular the verifier looks for:
 
 Here's an example run that uses the above specification:
 
-```
+```shell
 $ spex verify example/petstore-modal-faults.spex \
     --host http://localhost --port 8080 --tests 2000
 
