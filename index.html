@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>The Spex specification language and verifier</title>
+  <link rel="stylesheet" href="asset/style.css?modified=2024-11-14">
+  <link rel="shortcut icon" type="image/png" href="asset/spex.png">
+  <script data-goatcounter="https://spex-lang.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<header class=box>
+  <nav id="navbar" class="menu">
+    <a href="index.html"><img class="logo" src="asset/spex.png" alt="Spex glasses">Spex</a>
+    <a href="documentation.html">Documentation</a>
+    <a href="community.html">Community</a>
+  </nav>
+  <div class="push">
+    <a href="https://github.com/spex-lang/spex">Code</a>
+  </div>
+</header>
+<noscript>
+  <img src="https://spex-lang.goatcounter.com/count?t=The+Spex+specification+language+and+verifier"
+       alt="goatcounter">
+</noscript>
+<main>
+<h1 id="spex">Spex</h1>
+<p>Spex is a specification language and toolkit for working with HTTP
+API servers.</p>
+<p>Here's an example specification:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode spex"><code class="sourceCode spex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">component</span> PetStore <span class="kw">where</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>addPet       <span class="ot">:</span> <span class="kw">POST</span> /pet Pet</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>getPet       <span class="ot">:</span> <span class="kw">GET</span> /pet/<span class="ot">{</span>petId <span class="ot">:</span> <span class="ot">@</span><span class="dt">Int</span><span class="ot">}</span> <span class="ot">-&gt;</span> Pet</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>getBadPet    <span class="ot">:</span> <span class="kw">GET</span> /pet/badJson/<span class="ot">{</span>petId <span class="ot">:</span> <span class="ot">@</span><span class="dt">Int</span><span class="ot">}</span> <span class="ot">-&gt;</span> Pet</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>neverReached <span class="ot">:</span> <span class="kw">GET</span> /noThere <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> Pet =</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">{</span> petId   <span class="ot">:</span> <span class="dt">Int</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  , petName <span class="ot">:</span> <span class="dt">String</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="ot">}</span></span></code></pre></div>
+<p>The verifer takes a specification and an URL and checks if the server
+behind the URL respects the specification. In particular the verifier
+looks for:</p>
+<ul>
+<li>Minimal test cases that give rise to non-2xx responses, or;</li>
+<li>JSON response decode or type errors, as well as;</li>
+<li>Unreachable endpoints.</li>
+</ul>
+<p>Here's an example run that uses the above specification:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode shell"><code class="sourceCode shell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>$ spex verify example/petstore-modal-faults.spex \</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    --host http://localhost --port 8080 --tests 2000</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="in">i</span> Verifying the deployment:    http://localhost:8080</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  against the specification:   example/petstore-modal-faults.spex</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="in">i</span> Checking the specification.</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="in">i</span> Waiting for health check to pass...</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="al">✓ </span>Health check passed!</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="in">i</span> Starting to run tests...</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="al">✓ </span>Done testing!</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  Found 2 intereresting test cases:</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    1. addPet : POST /pet {petId = -46, petName = qux} </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>       addPet : POST /pet {petId = -46, petName = qux} </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>         ↳ 409 Conflict: Pet already exists</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    2. getBadPet : GET /pet/badJson/{petId = 99} -&gt; Pet</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>         ↳ JSON decode failure: Error in $: endOfInput &quot;petId&quot;:99,&quot;petName&quot;:&quot;qux&quot;}</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>       (1 shrink)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  Coverage:</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    2xx:</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>      26% addPet (530 ops)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>      8% getBadPet (156 ops)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>      8% getPet (160 ops)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    404:</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>      15% getBadPet (308 ops)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>      17% getPet (336 ops)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>      25% neverReached (509 ops)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    409:</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>      0% addPet (1 ops)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    Not covered (no non-404 responses):</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>      neverReached</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  Total operations (ops): 2000</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  Use --seed 3967796076964233976 to reproduce this run.</span></code></pre></div>
+<p>Note that the server running on <code>http://localhost:8080</code>
+needs to be written in another language and be deployed, before the Spex
+verifer is run.</p>
+<p>For an introduction to how the above works in more detail, please see
+the <a href="tutorial.html">tutorial</a>.</p>
+</main>
+</body>
+</html>
