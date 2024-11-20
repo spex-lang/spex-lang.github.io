@@ -55,7 +55,7 @@ a:not([class]) {
 /* Make images easier to work with */
 img,
 picture {
-  max-width: 100%;
+  max-width: 95%;
   display: block;
 }
 
@@ -237,12 +237,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 /* Tufte CSS:
 *
-/**/
-/* /* Tufte CSS styles */ */
-/* html { */
-/*     font-size: 15px; */
-/* } */
-/**/
 /* body { */
 /*     width: 87.5%; */
 /*     margin-left: auto; */
@@ -350,20 +344,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 /* } */
 /* /* end chapter epigraphs styles */ */
 /**/
-/* blockquote { */
-/*     font-size: 1.4rem; */
-/* } */
-/**/
-/* blockquote p { */
-/*     width: 55%; */
-/*     margin-right: 40px; */
-/* } */
-/**/
-/* blockquote footer { */
-/*     width: 55%; */
-/*     font-size: 1.1rem; */
-/*     text-align: right; */
-/* } */
 /**/
 /* section > p, */
 /* section > footer, */
