@@ -4,6 +4,37 @@ title: Motivation - Spex
 
 # Motivation
 
+*Work in progress*
+
+## What is a specification language?
+
+In a lecture, back in 2010, Joe Armstrong
+[said](https://youtu.be/ieEaaofM7uU?list=PL_aCdZH3eJJVki0YqHbJtqZKSmcbXH0jP&t=68):
+
+> "We need languages to describe encodings and protocols not machine
+> instructions"
+
+He then went on to elaborate saying that we have plenty (too many) programming
+languages (e.g. C, Java, Go, Python, Erlang, etc) which at a high-level allow
+us to manipulate machines via machine instructions, but we have very few
+*specification languages* which describe encodings and protocols, i.e. describe
+what's going on *between* two, or more, machines!
+
+In a later [talk](https://youtu.be/ed7A7r6DBsM?t=723) (2013) Joe has the
+following slide:
+
+![Joe Armstrong's talk "The How and Why of Fitting Things
+Together"](asset/joe_protocols.png)
+
+Where the black boxes are written using programming languages while the big red
+arrow between is what Joe means with encodings and protocols, which is what we
+need different (specification) languages for.
+
+*Spex* tries to be such a specification language, rather than yet another
+programming language.
+
+## What are the problems with past approaches?
+
 Few people write specifications for their software these days. The reason for
 this clear: there are few benefits from doing so, especially when taking into
 account the risk of the specification and the real system drifting out of sync
@@ -27,6 +58,7 @@ features.)
 In the future we'd like to derive more useful functionality from
 specifications, including:
 
+  - Joe's contract checker;
   - Ability to import and export OpenAPI/Swagger, Protobuf, etc. Think of how
     Pandoc can covert between text formats, perhaps we can do the same between
     specifications;

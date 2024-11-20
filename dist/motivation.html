@@ -26,6 +26,33 @@
 </noscript>
 <main>
 <h1 id="motivation">Motivation</h1>
+<p><em>Work in progress</em></p>
+<h2 id="what-is-a-specification-language">What is a specification
+language?</h2>
+<p>In a lecture, back in 2010, Joe Armstrong <a
+href="https://youtu.be/ieEaaofM7uU?list=PL_aCdZH3eJJVki0YqHbJtqZKSmcbXH0jP&amp;t=68">said</a>:</p>
+<blockquote>
+<p>"We need languages to describe encodings and protocols not machine
+instructions"</p>
+</blockquote>
+<p>He then went on to elaborate saying that we have plenty (too many)
+programming languages (e.g. C, Java, Go, Python, Erlang, etc) which at a
+high-level allow us to manipulate machines via machine instructions, but
+we have very few <em>specification languages</em> which describe
+encodings and protocols, i.e. describe what's going on <em>between</em>
+two, or more, machines!</p>
+<p>In a later <a href="https://youtu.be/ed7A7r6DBsM?t=723">talk</a>
+(2013) Joe has the following slide:</p>
+<p><img src="asset/joe_protocols.png"
+alt="Joe Armstrong&#39;s talk &quot;The How and Why of Fitting Things Together&quot;" /></p>
+<p>Where the black boxes are written using programming languages while
+the big red arrow between is what Joe means with encodings and
+protocols, which is what we need different (specification) languages
+for.</p>
+<p><em>Spex</em> tries to be such a specification language, rather than
+yet another programming language.</p>
+<h2 id="what-are-the-problems-with-past-approaches">What are the
+problems with past approaches?</h2>
 <p>Few people write specifications for their software these days. The
 reason for this clear: there are few benefits from doing so, especially
 when taking into account the risk of the specification and the real
@@ -48,6 +75,7 @@ section on features.)</p>
 <p>In the future we'd like to derive more useful functionality from
 specifications, including:</p>
 <ul>
+<li>Joe's contract checker;</li>
 <li>Ability to import and export OpenAPI/Swagger, Protobuf, etc. Think
 of how Pandoc can covert between text formats, perhaps we can do the
 same between specifications;</li>
