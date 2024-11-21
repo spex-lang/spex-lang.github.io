@@ -27,8 +27,8 @@
 <main>
 <h1 id="motivation">Motivation</h1>
 <p><em>Work in progress</em></p>
-<h2 id="what-is-a-specification-language">What is a specification
-language?</h2>
+<h2 id="what-is-a-specification-language">What is a "specification
+language"?</h2>
 <p>In a lecture, back in 2010, Joe Armstrong <a
 href="https://youtu.be/ieEaaofM7uU?list=PL_aCdZH3eJJVki0YqHbJtqZKSmcbXH0jP&amp;t=68">said</a>:</p>
 <blockquote>
@@ -37,22 +37,74 @@ instructions"</p>
 </blockquote>
 <p>He then went on to elaborate saying that we have plenty (too many)
 programming languages (e.g. C, Java, Go, Python, Erlang, etc) which at a
-high-level allow us to manipulate machines via machine instructions, but
-we have very few <em>specification languages</em> which describe
-encodings and protocols, i.e. describe what's going on <em>between</em>
-two, or more, machines!</p>
+high-level allow us to manipulate machines via machine instructions (and
+syscalls). However we only have a few <em>specification languages</em>
+which describe encodings and protocols, i.e. describe what's going on
+<em>between</em> two, or more, machines!</p>
 <p>In a later <a href="https://youtu.be/ed7A7r6DBsM?t=723">talk</a>
 (2013) Joe has the following slide:</p>
 <p><img src="asset/joe_protocols.png"
 alt="Joe Armstrong&#39;s talk &quot;The How and Why of Fitting Things Together&quot;" /></p>
 <p>Where the black boxes are written using programming languages while
 the big red arrow between is what Joe means with encodings and
-protocols, which is what we need different (specification) languages
-for.</p>
-<p><em>Spex</em> tries to be such a specification language, rather than
-yet another programming language.</p>
+protocols. It's this big red arrow which is what we need different
+languages for, and to distinguish them from "normal" programming
+languages, we shall call them specification languages.</p>
+<p><em>Spex</em> tries to be such a specification language.</p>
+<h2 id="the-difference-between-apis-encoding-and-protocols">The
+difference between APIs, encoding and protocols</h2>
+<p>Before we can start talking about the shortcomings of current
+specification languages, it's helpful to first break down Joe's red
+arrow. It actually has three components:</p>
+<ol type="1">
+<li>The interface of the blackbox (the API), i.e. what messages the
+component accepts;</li>
+<li>The encoding of the messages, i.e. what bytes (or bits) are sent
+over the communication channel;</li>
+<li>The protocol, i.e. what sequences of messages are allowed.</li>
+</ol>
+<p>Hopefully it's clear what encodings are (e.g. UTF-8 encoded JSON or
+binary Protobuf messages), but it might be worth pondering the
+difference between APIs and protocols.</p>
+<p>In the latter of the above mentioned talks, Joe gives an example
+where merely knowing the API isn't good enough. The example he gives is
+the POSIX filesystem API:</p>
+<ul>
+<li><code>open</code>: takes a filepath and returns a file
+descriptor;</li>
+<li><code>write</code>: takes a file descriptor and string and returns
+how many bytes it successfully wrote;</li>
+<li><code>close</code>: takes a file descriptor and closes it, thus
+freeing up resources.</li>
+</ul>
+<p>Nothing in the API says, for example, that we can't continue writing
+to a file descriptor that has been closed! This is where protocols come
+in, saying for example that we can only write to a file descritor that
+is open, etc.</p>
 <h2 id="what-are-the-problems-with-past-approaches">What are the
 problems with past approaches?</h2>
+<p>Now that we've established the differences between APIs, encodings
+and protocols, we can start talking about where the current
+specification languages fall short.</p>
+<p>Consider for example OpenAPI specifications, they only talk about the
+API</p>
+<ul>
+<li><p>Syntax?</p></li>
+<li><p>Tooling?</p>
+<ul>
+<li>Is the spec up to date?</li>
+</ul></li>
+<li><p>TypeSpec</p></li>
+<li><p>gRPC</p></li>
+<li><p>OpenAPI spec, json schema, protobufs, Thrift, <a
+href="https://en.wikipedia.org/wiki/Apache_Avro">Avro</a>, <a
+href="https://en.wikipedia.org/wiki/ASN.1">ASN.1</a></p></li>
+<li><p>session types, Joe's <a
+href="https://erlang.org/workshop/2002/Armstrong.pdf">UBF</a></p></li>
+<li><p><a
+href="http://www.erlang-factory.com/upload/presentations/180/ErlangUserConference2009-NortonandFritchie.pdf">http://www.erlang-factory.com/upload/presentations/180/ErlangUserConference2009-NortonandFritchie.pdf</a></p></li>
+<li><p>Separate types from their encodings?</p></li>
+</ul>
 <p>Few people write specifications for their software these days. The
 reason for this clear: there are few benefits from doing so, especially
 when taking into account the risk of the specification and the real
@@ -103,6 +155,11 @@ connected.</li>
 there's a clear benefit to writing specifications!</p>
 <h2 id="long-term">Long term</h2>
 <ul>
+<li><p>Machine-to-machine interfaces, might also want to specify
+human-to-machine interfaces (e.g. CLI, GUIs?)</p></li>
+<li><p>OpenAPI and Protobuf describe the interface of one machine, but
+what about the topology? I.e. which machine talks to which
+machine?</p></li>
 <li><p>The long term vision for <em>Spex</em> is allow for complete
 system specifications, rather than mere HTTP JSON API specifications.
 HTTP API specifications of components in a system captures how the
@@ -128,6 +185,12 @@ will be hard to replicate in OpenAPI, e.g.:</p>
 <li>Model definitions -- fakes rather than mocks and better
 fuzzing.</li>
 </ul></li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<ul>
+<li>What we mean by specification languages</li>
+<li>How the current approaches are lacking</li>
+<li>How we propose to fix the current problems and go beyond</li>
 </ul>
 </main>
 </body>
