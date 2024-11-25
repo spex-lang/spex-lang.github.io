@@ -2,9 +2,13 @@
 title: Motivation - Spex
 ---
 
-# Motivation
+# The motivation behind Spex
 
 *Work in progress*
+
+In order to motivate why we need *Spex*, we need to first cover what a
+*specification language* is, what they are useful for, and look at the
+shortcomings of current specification languages.
 
 ## What is a "specification language"?
 
@@ -96,6 +100,10 @@ There's one exception which supports specifying all three aspects and that's
 Joe's [Universal Binary Format](https://erlang.org/workshop/2002/Armstrong.pdf)
 (2002), it seems to have been largely forgotten about though.
 
+* Syntax for specifing sync and async APIs? 
+  - gRPC can do this, but again only for gRPC systems...
+  - https://www.asyncapi.com/en
+
 ### Syntax and tooling
 
 In addition to the aspets of what you can specify, it's also important to
@@ -106,19 +114,70 @@ specification.
 Ultimately the low use of specification languages must at least somewhat be a
 reflection of the fact that specifications are not worth the effort?
 
-* the risk of the specification and the real system drifting out of sync
-(i.e. either the system or the specification is changed, but we forget to
-update the other).
-  - no a problem for protobuf grpc
+A key factor in this equation is the risk of the specification and the system
+behing specified getting out of sync, i.e. either the specification changes and
+the corresponding change isn't done in the system or vice versa, which
+significantly devalues the specification effort.
+
+There are two strategies that existing solutions use:
+
+  1. Test for conformity between the specification and the system;
+  2. Generate code from the specification, thus ensuring correctness by
+     construction.
+
+For example, OpenAPI specifications can be used as basis for testing using
+third-party tooling, while gRPC with Protobuf takes the latter approach.
+
+There's an obvious advantage in the correct-by-construction approach in that no
+testing is needed, but there's also a less obvious downside: it doesn't make
+sense to use Protobuf to specify an already existing (legacy) system. 
+
+Why would one want to specify an existing system? There could be many reasons:
+
+  1. To document the system and have tooling which generates documentation from
+     the specification;
+  2. To use the specification as a blueprint for a rewrite, i.e. specify the
+     old system, test it the specification agains the old system to ensure it's
+     correct, then use the specification to develop the new system, potentially
+     generating code from the specification, and finally testing the new system
+     against the specification to ensure that it behaves like the old system;
+  3. To increase the test coverage of the system by deriving tests from the
+     specification;
+  4. To derive a mock from the specification which can be used in contract tests.
+
+Ok that was a lot about tooling, let's just finish off on a lighter note by
+talking about syntax.
 
 OpenAPI specifications are written in JSON or YAML, which verbose and hard to
-read. Microsoft's [TypeSpec](https://typespec.io/) (2024) introduces a sane
-syntax inspired by TypeScript.
+read. Just like the world is slowly realsing that these formats are bad for
+configuration, due to not being well-specified and lacking abstraction
+abilities, it seems that slowly people are realising that for the same reasons
+JSON or YAML are also bad specification languages.
 
+Earlier this year (2024) Microsoft released their specification language
+[TypeSpec](https://typespec.io/), which introduces a sane syntax inspired by
+TypeScript. It seems that they didn't release any tooling on their own and
+instead seem to rely on translating into OpenAPI specifications and using their
+tooling.
 
-* OpenAPI tooling is mostly third-party, no unified human-to-machine interface?
+### Property-based testing
 
-* (https://www.asyncapi.com/en)
+We've talked about specification languages and using tooling to test that the
+system they intend to specify indeed behaves according to the specification.
+
+At this point it's also worth mentioning the relationship to property-based testing.
+
+When property-based testing is used to do blackbox testing of a stateful API,
+then the property is a specification. Given that every programming language has
+its own slightly different implementation property-based testing, this means
+that we have (at least) one specification language per programming language.
+
+Since these property-based specifications are basically eDSLs which change when
+the libraries change, the tooling for such specifications is almost
+non-existant (except for the testing of a specification against a system).
+
+Furthermore these eDSL specifications will have the idiosyncrasies of their
+host-languages, making them hard to read by non-programmers.
 
 ## What the Spex specification language tries to do different
 
@@ -146,6 +205,7 @@ syntax inspired by TypeScript.
         are connected;
       + Generation of deployment related code;
       + Load testing.
+  - partially solve the sad state of PBT?
 
 * Longer term / Lab / experimentation
   - Separate types from their encodings?
