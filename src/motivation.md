@@ -6,9 +6,12 @@ title: Motivation - Spex
 
 *Work in progress*
 
-In order to motivate why we need *Spex*, we need to first cover what a
-*specification language* is, what they are useful for, and look at the
-shortcomings of current specification languages.
+Whenever a new (programming) language is proposed, the first question that
+comes to most peoples minds is: do we really need yet another language?
+
+In order to properly answer this question and thus motivate why we need *Spex*,
+we need to first cover what a *specification language* is, how they are
+different from programming languages, and what they are useful for.
 
 ## What is a "specification language"?
 
@@ -172,27 +175,67 @@ then the property is a specification. Given that every programming language has
 its own slightly different implementation property-based testing, this means
 that we have (at least) one specification language per programming language.
 
-Since these property-based specifications are basically eDSLs which change when
-the libraries change, the tooling for such specifications is almost
-non-existant (except for the testing of a specification against a system).
+Since these property-based specifications are basically eDSLs (embedded
+domain-specific language) which change when the libraries change, the tooling
+for such specifications is almost non-existant (except for the testing of a
+specification against a system).
 
 Furthermore these eDSL specifications will have the idiosyncrasies of their
-host-languages, making them hard to read by non-programmers.
+host-languages, making them hard to read and write by people who don't know the
+host-language (or programming more generally).
 
 ## What the Spex specification language tries to do different
 
-* Sane syntax
+Given how few specification languages there are, as Joe pointed out, there's
+plenty of design choices to be made (and we shall return to this topic later).
+
+### Short term
+
+However, given our above analysis, there are a couple of obvious things that
+we'd like to have in *Spex*:
+ 
+* A sane syntax with good error messages;
+* A versatile toolkit, containing at least:
+  - A verifier, which can test that some system respects some specification;
+  - Generate a prototype implementation from a specification, so that you can
+    demo your idea or hand of a working server HTTP API to the frontend team
+    before the actual backend is done (without risking that there will be a
+    mismatch in the end, since the real backend is tested against the same
+    specification as the prototype is derived from);
+  - Ability to import and export OpenAPI/Swagger, Protobuf, etc. Think of how
+    Pandoc can covert between text formats, perhaps we can do the same between
+    specifications;
+  - Lua templating (again similar to Pandoc) which enables code generation from
+    specifications or the minimal test cases that the verifer produces.
+
+This would bring *Spex* somewhat on par with existing solutions.
+
+However, as we already hinted at above, we can addition fix some shortcomings
+by:
+
+* Full system specifications
+  - async and sync apis 
+  - protocols and Joe's contract checker
+
+By being a language rather than merely a specification format, it make sense to
+also provide:
+  - A REPL, which allows you to explore a system using a specification. Tab
+    completion is provided for the API and random payload data is generated on
+    the fly;
+  - A time traveling debugger which enables you to step forwards and backwards
+    through a sequence of API calls, in order to explore how the system evolves
+    over time.
+
 * Good unified tooling that coevolves with the syntax, we can add features that
   will be hard to replicate in OpenAPI, e.g.:
     - Refinement types -- validation logic;
     - Model definitions -- fakes rather than mocks and better fuzzing.
-* Full system specifications
-  - async and sync apis 
-  - Machine-to-machine interfaces, might also want to specify human-to-machine
-    interfaces (e.g. CLI, GUIs?)
+    - literate Spex
+
+### Long term
+
   - OpenAPI and Protobuf describe the interface of one machine, but what about
     the topology? I.e. which machine talks to which machine?
-
   - The long term vision for *Spex* is allow for complete system specifications,
     rather than mere HTTP JSON API specifications. HTTP API specifications of
     components in a system captures how the components may be called, but they
@@ -208,48 +251,10 @@ host-languages, making them hard to read by non-programmers.
   - partially solve the sad state of PBT?
 
 * Longer term / Lab / experimentation
-  - Separate types from their encodings?
+  - Separate types from their encodings, IDL for IDLs?
   - Spex in Spex?
   - file system example: protocols specify valid (single threaded) sequences,
     what about concurrently accessed protocols?
-
-Spex tries to address this shortcoming of specifications by in addition to
-being a specification language, it's also a verifier that checks if some system
-respects the specification -- thereby always ensuring that the two are in sync.
-
-In the process of testing the real system against the specification is will
-also produce minimal test cases for potential problems it notices along the way:
-
-  - Non-2xx responses;
-  - JSON response decoding and type issues;
-  - Non-reachable APIs.
-
-(We'll look at examples of how exactly this gets reported in the next section on
-features.)
-
-In the future we'd like to derive more useful functionality from
-specifications, including:
-
-  - Joe's contract checker;
-  - Ability to import and export OpenAPI/Swagger, Protobuf, etc. Think of how
-    Pandoc can covert between text formats, perhaps we can do the same between
-    specifications;
-  - Generate a prototype implementation from a specification, so that you can
-    demo your idea or hand of a working server HTTP API to the frontend team
-    before the actual backend is done (without risking that there will be a
-    mismatch in the end, since the real backend is tested against the same
-    specification as the prototype is derived from);
-  - A REPL, which allows you to explore a system using a specification. Tab
-    completion is provided for the API and random payload data is generated on
-    the fly;
-  - A time traveling debugger which enables you to step forwards and backwards
-    through a sequence of API calls, in order to explore how the system evolves
-    over time.
-  - Lua templating (again similar to Pandoc) which enables code generation from
-    specifications or the minimal test cases that the verifer produces;
-  - The ability to refine types, e.g. `{ petId : Int | petId > 0 }` and be able
-    to generate validation logic from these;
-  - Generate diagrams for a better overview of how components are connected.
 
 With this future functionality we hope to get to the point where there's a
 clear benefit to writing specifications!
