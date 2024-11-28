@@ -139,7 +139,7 @@ available once we have a specification.</p>
 somewhat be a reflection of the fact that specifications are not worth
 the effort?</p>
 <p>A key factor in this equation is the risk of the specification and
-the system behing specified getting out of sync, i.e. either the
+the system being specified getting out of sync, i.e. either the
 specification changes and the corresponding change isn't done in the
 system or vice versa, which significantly devalues the specification
 effort.</p>
@@ -205,12 +205,13 @@ their host-languages, making them hard to read and write by people who
 don't know the host-language (or programming more generally).</p>
 <h2 id="what-the-spex-specification-language-tries-to-do-different">What
 the Spex specification language tries to do different</h2>
-<p>Given how few specification languages there are, as Joe pointed out,
-there's plenty of design choices to be made (and we shall return to this
-topic later).</p>
+<p>Let's split this section into short and long term plans. The short
+term plans are either partially implemented already, or there's a clear
+idea how to implement them. The longer term plans on the other hand are
+a bit more open ended.</p>
 <h3 id="short-term">Short term</h3>
-<p>However, given our above analysis, there are a couple of obvious
-things that we'd like to have in <em>Spex</em>:</p>
+<p>Given our above analysis, there are a couple of obvious things that
+we'd like to have in <em>Spex</em>:</p>
 <ul>
 <li>A sane syntax with good error messages;</li>
 <li>A versatile toolkit, containing at least:
@@ -230,16 +231,19 @@ generation from specifications or the minimal test cases that the
 verifer produces.</li>
 </ul></li>
 </ul>
-<p>This would bring <em>Spex</em> somewhat on par with existing
-solutions.</p>
+<p>This would bring <em>Spex</em> on par with existing solutions,
+especially considering one can always export to OpenAPI and use their
+tooling as a fallback option.</p>
 <p>However, as we already hinted at above, we can addition fix some
 shortcomings by:</p>
 <ul>
-<li>Full system specifications
-<ul>
-<li>async and sync apis</li>
-<li>protocols and Joe's contract checker</li>
-</ul></li>
+<li>Allowing for more complete specifications, than OpenAPI, by having
+syntax for both synchronous and asynchronous APIs;</li>
+<li>Adding syntax for specifying protocols, i.e. valid sequences of API
+calls, thereby addressing Joe's critisism;</li>
+<li>A contract checker, i.e. a component/proxy which sits between two
+component and checks that they follow the protocol at run-time, again
+inspired by Joe's work.</li>
 </ul>
 <p>By being a language rather than merely a specification format, it
 make sense to also provide:</p>
@@ -251,27 +255,29 @@ generated on the fly;</li>
 backwards through a sequence of API calls, in order to explore how the
 system evolves over time.</li>
 </ul>
-<ul>
-<li>Good unified tooling that coevolves with the syntax, we can add
-features that will be hard to replicate in OpenAPI, e.g.:
+<p>Taking a language rather than format centric approach also makes it
+easier to provide unified tooling that coevolves with the syntax,
+e.g.:</p>
 <ul>
 <li>Refinement types -- validation logic;</li>
 <li>Model definitions -- fakes rather than mocks and better
-fuzzing.</li>
-<li>literate Spex</li>
-</ul></li>
+fuzzing;</li>
+<li>Literate Spex.</li>
 </ul>
+<p>It's hard to imagine what trying to add these things to e.g. OpenAPI
+even would look like, given that it doesn't have it's own syntax.</p>
+<p>With this future functionality we hope to get to the point where
+there's a clear benefit to writing specifications!</p>
 <h3 id="long-term">Long term</h3>
+<p>Given how few specification languages there are, as Joe pointed out,
+there's plenty of design choices to be made. Longer term it would be
+interesting to explore some of this design space.</p>
+<p>Here are some ideas of possible syntax and tooling extensions:</p>
 <ul>
-<li>OpenAPI and Protobuf describe the interface of one machine, but what
-about the topology? I.e. which machine talks to which machine?</li>
-<li>The long term vision for <em>Spex</em> is allow for complete system
-specifications, rather than mere HTTP JSON API specifications. HTTP API
-specifications of components in a system captures how the components may
-be called, but they don't say how the components are related to each
-other. For example, one obvious thing that's missing is that there can
-be async message passing between the components. These more complete
-system specifications open up the potential for other kinds of tooling:
+<li><p>OpenAPI and Protobuf describe the interface of one machine, but
+what about the topology? I.e. which machine talks to which machine?
+These more complete system specifications open up the potential for
+other kinds of tooling:</p>
 <ul>
 <li>Linters that ensures global consistancy;</li>
 <li>More complete documentation with diagrams for visualising how
@@ -279,19 +285,24 @@ components are connected;</li>
 <li>Generation of deployment related code;</li>
 <li>Load testing.</li>
 </ul></li>
-<li>partially solve the sad state of PBT?</li>
+<li><p>We can also imagine being able to specify human-to-machine
+interfaces, such as CLIs and GUIs, in addition to the machine-to-machine
+APIs that we've already discussed;</p></li>
+<li><p>Can we partially solve the problem of all property-based
+specifications in different programming languages all have different
+formats and no shared tooling?</p></li>
+<li><p>Protobuf is an example of an interface description language
+(IDL), it lets you define interfaces using predefined types that
+Protobuf provides a predefined way of serialising those types into
+binary which can be sent over the network or saved to disk. What if we
+wanted to specify our own binary format? Perhaps we want to use some
+compression method that is particular to our problem domain. Allowing
+specification of binary formats in general would be interesting to look
+at;</p></li>
+<li><p>BNF syntax for describing context-free grammars -- and generators
+that can use this to generate structured data;</p></li>
+<li><p>Spex in Spex?</p></li>
 </ul>
-<ul>
-<li>Longer term / Lab / experimentation
-<ul>
-<li>Separate types from their encodings, IDL for IDLs?</li>
-<li>Spex in Spex?</li>
-<li>file system example: protocols specify valid (single threaded)
-sequences, what about concurrently accessed protocols?</li>
-</ul></li>
-</ul>
-<p>With this future functionality we hope to get to the point where
-there's a clear benefit to writing specifications!</p>
 <h2 id="conclusion">Conclusion</h2>
 <ul>
 <li>What we mean by specification languages</li>

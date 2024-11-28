@@ -118,7 +118,7 @@ Ultimately the low use of specification languages must at least somewhat be a
 reflection of the fact that specifications are not worth the effort?
 
 A key factor in this equation is the risk of the specification and the system
-behing specified getting out of sync, i.e. either the specification changes and
+being specified getting out of sync, i.e. either the specification changes and
 the corresponding change isn't done in the system or vice versa, which
 significantly devalues the specification effort.
 
@@ -186,12 +186,14 @@ host-language (or programming more generally).
 
 ## What the Spex specification language tries to do different
 
-Given how few specification languages there are, as Joe pointed out, there's
-plenty of design choices to be made (and we shall return to this topic later).
+Let's split this section into short and long term plans. The short term plans
+are either partially implemented already, or there's a clear idea how to
+implement them. The longer term plans on the other hand are a bit more open
+ended.
 
 ### Short term
 
-However, given our above analysis, there are a couple of obvious things that
+Given our above analysis, there are a couple of obvious things that
 we'd like to have in *Spex*:
  
 * A sane syntax with good error messages;
@@ -208,56 +210,79 @@ we'd like to have in *Spex*:
   - Lua templating (again similar to Pandoc) which enables code generation from
     specifications or the minimal test cases that the verifer produces.
 
-This would bring *Spex* somewhat on par with existing solutions.
+This would bring *Spex* on par with existing solutions, especially considering
+one can always export to OpenAPI and use their tooling as a fallback option.
 
 However, as we already hinted at above, we can addition fix some shortcomings
 by:
 
-* Full system specifications
-  - async and sync apis 
-  - protocols and Joe's contract checker
+* Allowing for more complete specifications, than OpenAPI, by having syntax for
+  both synchronous and asynchronous APIs;
+* Adding syntax for specifying protocols, i.e. valid sequences of API calls,
+  thereby addressing Joe's critisism;
+* A contract checker, i.e. a component/proxy which sits between two component
+  and checks that they follow the protocol at run-time, again inspired by Joe's
+  work.
 
 By being a language rather than merely a specification format, it make sense to
 also provide:
-  - A REPL, which allows you to explore a system using a specification. Tab
-    completion is provided for the API and random payload data is generated on
-    the fly;
-  - A time traveling debugger which enables you to step forwards and backwards
-    through a sequence of API calls, in order to explore how the system evolves
-    over time.
 
-* Good unified tooling that coevolves with the syntax, we can add features that
-  will be hard to replicate in OpenAPI, e.g.:
-    - Refinement types -- validation logic;
-    - Model definitions -- fakes rather than mocks and better fuzzing.
-    - literate Spex
+* A REPL, which allows you to explore a system using a specification. Tab
+  completion is provided for the API and random payload data is generated on
+  the fly;
+* A time traveling debugger which enables you to step forwards and backwards
+  through a sequence of API calls, in order to explore how the system evolves
+  over time.
 
-### Long term
+Taking a language rather than format centric approach also makes it easier to provide
+unified tooling that coevolves with the syntax, e.g.:
 
-  - OpenAPI and Protobuf describe the interface of one machine, but what about
-    the topology? I.e. which machine talks to which machine?
-  - The long term vision for *Spex* is allow for complete system specifications,
-    rather than mere HTTP JSON API specifications. HTTP API specifications of
-    components in a system captures how the components may be called, but they
-    don't say how the components are related to each other. For example, one
-    obvious thing that's missing is that there can be async message passing
-    between the components. These more complete system specifications open up the
-    potential for other kinds of tooling:
-      + Linters that ensures global consistancy;
-      + More complete documentation with diagrams for visualising how components
-        are connected;
-      + Generation of deployment related code;
-      + Load testing.
-  - partially solve the sad state of PBT?
+* Refinement types -- validation logic;
+* Model definitions -- fakes rather than mocks and better fuzzing;
+* Literate Spex.
 
-* Longer term / Lab / experimentation
-  - Separate types from their encodings, IDL for IDLs?
-  - Spex in Spex?
-  - file system example: protocols specify valid (single threaded) sequences,
-    what about concurrently accessed protocols?
+It's hard to imagine what trying to add these things to e.g. OpenAPI even would
+look like, given that it doesn't have it's own syntax.
 
 With this future functionality we hope to get to the point where there's a
 clear benefit to writing specifications!
+
+### Long term
+
+Given how few specification languages there are, as Joe pointed out, there's
+plenty of design choices to be made. Longer term it would be interesting to
+explore some of this design space.
+
+Here are some ideas of possible syntax and tooling extensions:
+
+* OpenAPI and Protobuf describe the interface of one machine, but what about
+  the topology? I.e. which machine talks to which machine? These more complete
+  system specifications open up the potential for other kinds of tooling:
+    + Linters that ensures global consistancy;
+    + More complete documentation with diagrams for visualising how components
+      are connected;
+    + Generation of deployment related code;
+    + Load testing.
+
+* We can also imagine being able to specify human-to-machine interfaces, such
+  as CLIs and GUIs, in addition to the machine-to-machine APIs that we've
+  already discussed;
+
+* Can we partially solve the problem of all property-based specifications in
+  different programming languages all have different formats and no shared
+  tooling?
+
+* Protobuf is an example of an interface description language (IDL), it lets
+  you define interfaces using predefined types that Protobuf provides a
+  predefined way of serialising those types into binary which can be sent over
+  the network or saved to disk. What if we wanted to specify our own binary
+  format? Perhaps we want to use some compression method that is particular to
+  our problem domain. Allowing specification of binary formats in general would
+  be interesting to look at;
+
+* BNF syntax for describing context-free grammars -- and generators that can
+  use this to generate structured data;
+* Spex in Spex?
 
 ## Conclusion
 
