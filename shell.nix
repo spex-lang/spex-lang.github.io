@@ -6,5 +6,7 @@ in
 pkgs.mkShell {
   packages = with pkgs; [
     pandoc
+    markdownlint-cli
+    vale
   ];
 }

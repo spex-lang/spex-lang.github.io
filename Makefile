@@ -29,6 +29,10 @@ dist/CNAME:
 dist/style.css: src/style.css
 	cp src/style.css dist
 
+check:
+	vale src/*.md
+	markdownlint src/*.md
+
 publish:
 	git subtree push --prefix dist origin gh-pages
 
