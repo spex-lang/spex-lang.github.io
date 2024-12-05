@@ -7,7 +7,7 @@ title: Motivation - Spex
 *Work in progress*
 
 Whenever a new (programming) language is proposed, the first question that
-comes to most peoples minds is: do we really need yet another language?
+comes to most peoples' minds is: do we really need yet another language?
 
 In order to properly answer this question and thus motivate why we need *Spex*,
 we need to first cover what a *specification language* is, how they are
@@ -239,7 +239,10 @@ unified tooling that coevolves with the syntax, e.g.:
 
 * Refinement types -- validation logic;
 * Model definitions -- fakes rather than mocks and better fuzzing;
-* Literate Spex.
+* BNF syntax for describing context-free grammars -- and generators that can
+  use this to generate structured data;
+* Literate Spex -- to make it easier to embed specifiations and the output that
+  can be produced from them straight into documentation itself.
 
 It's hard to imagine what trying to add these things to e.g. OpenAPI even would
 look like, given that it doesn't have it's own syntax.
@@ -263,15 +266,12 @@ Here are some ideas of possible syntax and tooling extensions:
       are connected;
     + Generation of deployment related code;
     + Load testing.
-
 * We can also imagine being able to specify human-to-machine interfaces, such
   as CLIs and GUIs, in addition to the machine-to-machine APIs that we've
   already discussed;
-
 * Can we partially solve the problem of all property-based specifications in
   different programming languages all have different formats and no shared
   tooling?
-
 * Protobuf is an example of an interface description language (IDL), it lets
   you define interfaces using predefined types that Protobuf provides a
   predefined way of serialising those types into binary which can be sent over
@@ -279,13 +279,29 @@ Here are some ideas of possible syntax and tooling extensions:
   format? Perhaps we want to use some compression method that is particular to
   our problem domain. Allowing specification of binary formats in general would
   be interesting to look at;
-
-* BNF syntax for describing context-free grammars -- and generators that can
-  use this to generate structured data;
-* Spex in Spex?
+* Ultimately it would be interesting to try to specify Spex in Spex itself. It
+  would be difficult to make this a completely formal specification that can't
+  drift apart from the implementation, but it would be interesting to see how
+  far one can get.
 
 ## Conclusion
 
-* What we mean by specification languages
-* How the current approaches are lacking
-* How we propose to fix the current problems and go beyond
+Hopefully by now the following should be clear:
+
+  1. What specification languages are and how they are different
+     from programming languages;
+  2. That existing specification languages leave a lot to be desired;
+  3. How Spex is trying to fix the current pain points.
+
+If you find what we've discussed compelling, then feel free to:
+
+* Try *Spex* out by following the
+  [tutorial](https://spex-lang.org/tutorial.html);
+
+* Come contribute on [GitHub](https://github.com/spex-lang/spex).
+
+If you got questions, suggestions for improvements or have any disagreement
+with anything we've discussed, come join our
+[chat](https://spex-lang.org/community.html).
+
+Let's try to make specifications more useful!
