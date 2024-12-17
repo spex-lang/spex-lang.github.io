@@ -1,5 +1,6 @@
 ---
 title: Tutorial - Spex
+date: 2024-12-17T00:00:00Z
 ---
 
 # Tutorial
@@ -20,17 +21,29 @@ in the first place.
 Having a specification is useful for different reasons in different situations,
 here are a few:
 
-* New system
-  - mock for frontend
-  - test new system once done (frontend should then also work)
-* Existing (legacy) system
-  - document exisiting system (for onbording / docs generation)
-  - increase test coverage
-* External system dependency
-  - mock api for integration testing
+* A new system is being developed, a specification is written and:
+  - A mock of the backend API is derived from the specification for frontend,
+    so that the UI development can start without waiting for the functionality
+    to be available;
+  - The same specification is used to test the API once done, if the tests pass
+    it's likely that the two components will be compatible.
+* An existing system is being maintained, a specification is written to:
+  - Document the system, perhaps for onboarding or documentation generation;
+  - Generate tests and potentially increase the test coverage;
+  - Since both the documentation and the tests are derived from the
+    specification, we get some guarantees that the documentation isn't stale.
 
-XXX: In this tutorial we shall focus on specifying existing (legacy) or external
-systems.
+* A legacy system is being rewritten, a specification is used to:
+  - Document and test the old system;
+  - Develop and test the new system;
+  - Since both are tested against the same specification, we get some
+    confidence that they will behave the same.
+* An external system dependency, where the specification can be used to mock
+  the dependency's API, so that it can be made part of the integration test
+  suite.
+
+In this tutorial we'll try to give you an idea of how any of these scenarios
+can be done.
 
 ## An example system
 
@@ -87,7 +100,7 @@ If we save the above into a file called `petstore.py`, then we can launch the
 server using `flask --app petstore run`. Once running we can add new pets as follows:
 
 ```bash
-$ http POST :5000/pet petId=2 petName="bepa"
+$ http POST :5000/pet petId=1 petName="apa"
 HTTP/1.1 201 CREATED
 
 []
@@ -96,18 +109,18 @@ HTTP/1.1 201 CREATED
 And look up pets by their id as follows:
 
 ```bash
-$ http GET :5000/pet/2
+$ http GET :5000/pet/1
 HTTP/1.1 200 OK
 
 {
-    "petId": "2",
-    "petName": "bepa"
+    "petId": "1",
+    "petName": "apa"
 }
 ```
 
 ## First basic specification
 
-One way to specify
+One way to specify the above example is as follows:
 
 ```spex
 component PetStore where
@@ -121,8 +134,11 @@ type Pet =
   }
 ```
 
-```
-spex verify --port 5000 example/petstore-basic.spex
+We can then verify that the implementation matches the specification as
+follows:
+
+```shell
+$ spex verify --port 5000 example/petstore-basic.spex
 
 i Verifying the deployment:    http://localhost:5000
   against the specification:   example/petstore-basic.spex
@@ -153,7 +169,61 @@ i Starting to run tests...
   Use --seed -7124542298296952417 to reproduce this run.
 ```
 
-XXX: reuse should be 50% if @/# are not specified?
+Let's go throught the output line by line. 
+
+  1. First we are told which server is getting checked and against which
+     specification. One thing to note here is that the default host is
+     `localhost`, but it can be changed with the `--host` flag;
+  2. That the specification is being checked is referring to it being parsed,
+     scope- and type-checked;
+  3. Before the tests start we make sure that the system under test is up and
+     running by checking if a helathpoint endpoint is returning a 200 response
+     code. The health endpoint is assumed to be `/health` by default, but can
+     be changed with the `--health` flag;
+  4. The tests start, in this case we didn't find anything interesting. We can
+     see that the test generated 49 `addPet` operations, which all succeded, and
+     51 `getPet` which all returned 404 not found;
+  5. We do see that `getPet` didn't get proper coverage properly, i.e. it
+     always returned 404;
+  6. Finally we are shown the seed used as basis for generating random
+     operations. Note that we don't need to restart the server between test
+     runs, it knows about the `_reset` endpoint and does the resets itself.
+
+So while we didn't get any interesting test failures, didn't properly cover
+`getPet`. Why is that? In order to explain this we need to understand how the
+testing works.
+
+## How the generative testing works
+
+The way testing an implementaion against a specification works is by generative
+testing. If you've seen property-based testing or fuzzing before, then you'll
+hopefully find this familiar.
+
+The way the tests work is as follows:
+
+  1. Pick an operation from the specification, e.g. `getPet` or `addPet`;
+  2. Generate random parameters for the operations, e.g. in the case of
+     `getPet` the parameter is `petId` of type interger;
+  3. Execute the operation against the implementation, i.e. make the HTTP
+     request;
+  4. Check if the response code is 2xx, if so go to 2, otherwise save the
+     operation together with all preceding operations (these will minimised, or
+     shrunk, and then presented as an interesting test case);
+  5. Stop once we reached some amount of test cases, by default 100.
+
+Now we are in a position to answer why `getPet` wasn't covered. If we look at the
+specification for `getPet` we see that it takes a `petId` of type integer, and
+as we just said this `petId` parameter gets randomly generated. So, assuming
+that we are using 64 bit integers, we got $2^64$ values to pick from when
+generating an integer. That means that the chance of generating a random
+`petId` that has previously been generated during a `addPet` operation is
+small, and therefore we 404 all the time! Let's have a look at how we can fix
+this next.
+
+## Introducing modal types
+
+* Add @ to ensure reuse
+* Add # to avoid reuse
 
 - Keep track of previously generated values and sometimes try to use them
   during generation of new tests. For example, without this ability the
@@ -162,10 +232,6 @@ XXX: reuse should be 50% if @/# are not specified?
 -  Try running with `--no-shrinking` flag to see the original test case that
   failed.
 
-## Introducing modal types
-
-* Add @ to ensure reuse
-* Add # to avoid reuse
 
 - [x] Ability to annotate input types with abstract and unique modalities (@ and
   !). Where an abstract type isn't generated, i.e. gets reused, and a unique type
@@ -249,7 +315,12 @@ development).
 
 ## Conclusion
 
-* Alpha...
+* We've seen how writing a specification for an existing system gives us testing 
+
+* Mocking for new systems or third-party dependencies
 
 Next you might want to follow the [installation](install.html) instructions in
 order to start running Spex on your own.
+
+* Alpha...
+
