@@ -49,7 +49,7 @@ can be done.
 
 Spex isn't a programming language in the traditional sense. In particular the
 system we want write a specification for will need to be written in another
-language. 
+language.
 
 Why? Well, *Spex* simply doesn't have the language features necessary to do
 normal programming.
@@ -220,74 +220,51 @@ generating an integer. That means that the chance of generating a random
 small, and therefore we 404 all the time! Let's have a look at how we can fix
 this next.
 
-## Introducing modal types
+## Abstract type modality 
 
-* Add @ to ensure reuse
-* Add # to avoid reuse
+We've seen how by always generating new `petId`s we'll rarely call `getPet`
+with a `petId` that has previously been added via `addPet`. 
 
-- Keep track of previously generated values and sometimes try to use them
-  during generation of new tests. For example, without this ability the
-  `getPet` requests would all most certainly return 404.
+If only we could say something like "don't make up random `petId`, but rather
+reuse ones that you've seen already in previous operations"...
 
--  Try running with `--no-shrinking` flag to see the original test case that
-  failed.
+Well as it so happens, there's a feature to do exactly that. It's called
+abstract modality, i.e. the random generation machinery should treat them as
+abstract and not try to generate them randomly.
 
-
-- [x] Ability to annotate input types with abstract and unique modalities (@ and
-  !). Where an abstract type isn't generated, i.e. gets reused, and a unique type
-  is always generated and never reused. Without any annotation a coin is
-  flipped and the value either gets reused or generated.
-  <details>
-
-  <summary>Example</summary>
+The syntax for saying that a type should be treated as abstract is the following:
 
   ```diff
   $ diff -u example/petstore-basic.spex example/petstore-modal.spex
-  - addPet : POST /pet Pet
+    addPet : POST /pet Pet
   - getPet : GET /pet/{petId : Int} -> Pet
-  + addPet : POST /pet !Pet
   + getPet : GET /pet/{petId : @Int} -> Pet
-  $ spex verify example/petstore-modal.spex
-
-  i Verifying the deployment:    http://localhost:8080
-    against the specification:   example/petstore-modal.spex
-  
-  i Parsing the specification.
-  
-  i Waiting for health check to pass.
-  
-  i Starting to run tests.
-  
-  i All tests passed, here are the results:
-  
-    failing tests: []
-    client errors: 3
-    coverage:      fromList [(OpId "addPet",51),(OpId "getPet",49)]
   ```
 
-  Notice how many fewer 404 errors we get for `getPet` now, because of the
-  abstract (`@`) annotation on `petId`.
+The mnemonic being `@` looks like an "A", which is the first letter of
+abstract. If we run the tests again with this newly changed specification, we
+see the following:
 
-- [x] Keep track of previous responses and try to use them during generation 
+```
+✓ Done testing!
 
-  <details>
+  Found 0 intereresting test case.
 
-  <summary>Example</summary>
+  Coverage:
+    2xx:
+      15% getPet (15 ops)
+      52% addPet (52 ops)
+    404:
+      33% getPet (33 ops)
 
-  Imagine we got:
-  ```
-  addPet : POST /pet Pet
-  getPet : GET /pet/{petId : Int} -> Pet
 
-  type Pet =
-    { petId   : Int
-    , petName : String 
-    }
-  ```
-  and `addPet` is implemented such that it throws an error if we try to add the
-  exact same pet twice. Finding this error without reusing responses during
-  generation is difficult, because we'd need to randomly generate the same
-  `petId : Int` and petname : String` twice. 
+  Total operations (ops): 100
+
+  Use --seed 6320047119747240588 to reproduce this run.
+```
+
+Notice that we got fewer 404 errors now, because of the abstract (`@`)
+annotation on `petId`.
 
   If we reuse inputs and reponses on the other hand, then it's easy to find it.
   Here's one scenario which would find the error:
@@ -299,6 +276,37 @@ this next.
 
   </details>
 
+## Unique type modality
+
+* Add # to avoid reuse
+
+* mnemonic being # is pronounced "hash" and (cryptographic) hashing functions
+  uniquely identify its inputs.
+
+```diff
+  $ diff -u example/petstore-basic.spex example/petstore-modal.spex
+  - addPet : POST /pet Pet
+  + addPet : POST /pet #Pet
+    getPet : GET /pet/{petId : @Int} -> Pet
+```
+[...]
+
+✓ Done testing!
+
+  Found 0 intereresting test case.
+
+  Coverage:
+    2xx:
+      25% getPet (25 ops)
+      53% addPet (53 ops)
+    404:
+      22% getPet (22 ops)
+
+
+  Total operations (ops): 100
+
+  Use --seed -6089184689399689604 to reproduce this run.
+```
 
 ## Mocking APIs
 
@@ -318,6 +326,8 @@ development).
 * We've seen how writing a specification for an existing system gives us testing 
 
 * Mocking for new systems or third-party dependencies
+
+* More uses of specifications, c.f. [motivation](motivation.html)
 
 Next you might want to follow the [installation](install.html) instructions in
 order to start running Spex on your own.
