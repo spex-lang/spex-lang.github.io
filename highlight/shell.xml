@@ -19,7 +19,7 @@
      <itemDatas>
       <itemData name="Normal Text" defStyleNum="dsNormal" />
       <itemData name="Info" defStyleNum="dsInformation" />
-      <itemData name="Done" defStyleNum="dsAlert" />
+      <itemData name="Done" defStyleNum="dsAnnotation" />
     </itemDatas>
   </highlighting>
   <general>
