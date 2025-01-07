@@ -1,11 +1,9 @@
 ---
 title: Tutorial - Spex
-date: 2024-12-17T00:00:00Z
+date: 2025-01-07T00:00:00Z
 ---
 
 # Tutorial
-
-*Work in progress, coming soon.*
 
 This tutorial is intended to get you started with writing your own Spex
 specifications. We'll cover all basic features of the specification language
@@ -45,7 +43,7 @@ here are a few:
 In this tutorial we'll try to give you an idea of how any of these scenarios
 can be done.
 
-## An example system
+## An example system: petstore
 
 Spex isn't a programming language in the traditional sense. In particular the
 system we want write a specification for will need to be written in another
@@ -266,46 +264,34 @@ see the following:
 Notice that we got fewer 404 errors now, because of the abstract (`@`)
 annotation on `petId`.
 
-  If we reuse inputs and reponses on the other hand, then it's easy to find it.
-  Here's one scenario which would find the error:
+How is this implemented? Basically any time we generate any value, e.g. a
+`petId` as part of an `addPet` operation, we store it in a "generation
+environment". If a type is annotated with the abstract modality, we'll reuse
+old values from the generation environment.
 
-    1. We generate a random `Pet` for `addPet`;
-    2. A `getPet` operation gets generated that reuses the `petId` from step 1;
-    3. The response `Pet` from step 2 gets reused in a subsequent `addPet`,
-       casuing the error.
-
-  </details>
+Responses from operation also gets stored in the generation environment, and
+maybe be reused when generating subsequent operations.
 
 ## Unique type modality
 
-* Add # to avoid reuse
+The abstract type modality ensure that values of the underlying type get
+reused, but what if we wanted to do the opposite -- enforce that values never
+get reused?
 
-* mnemonic being # is pronounced "hash" and (cryptographic) hashing functions
-  uniquely identify its inputs.
+This can be achieved with the unique type modality (`#`). The mnemonic being
+that "#" character is pronounced "hash" and (cryptographic) hashing functions
+uniquely identify its inputs.
+
+We've already seen an example of when this might be useful. If we try to add a
+pet with a pet id that already has been added we get a "409 Pet already exists"
+error, if we want to tell Spex to avoid generating add pet operations that
+result in conflicts, we can change the specification as follows:
 
 ```diff
   $ diff -u example/petstore-basic.spex example/petstore-modal.spex
   - addPet : POST /pet Pet
   + addPet : POST /pet #Pet
     getPet : GET /pet/{petId : @Int} -> Pet
-```
-[...]
-
-✓ Done testing!
-
-  Found 0 intereresting test case.
-
-  Coverage:
-    2xx:
-      25% getPet (25 ops)
-      53% addPet (53 ops)
-    404:
-      22% getPet (22 ops)
-
-
-  Total operations (ops): 100
-
-  Use --seed -6089184689399689604 to reproduce this run.
 ```
 
 ## Mocking APIs
@@ -315,22 +301,63 @@ We've seen how to check that an existing system adhears to a specification.
 In order to show how a specification can be useful before the system is
 implemented, let's have a look at mocking.
 
-Whether the server or specification is written first doesn't really matter, but
-longer term we hope that writing the specification first will be helpful in
-developing the server (because it gives you tooling that could be useful in the
-development).
+To start a mock server, use the `mock` subcommand:
 
+```
+$ spex mock example/petstore-basic.spex
+i Starting mock server on http://localhost:8080
+  Use --seed -684280361768894873 to reproduce this mock.
+```
+
+In another terminal, we can interact with the mock. For example we can pretend
+we are adding a new pet:
+
+```
+$ http POST :8080/pet petId=1 petName="apa"
+HTTP/1.1 200 OK
+
+[]
+```
+
+Or pretend we are retrieving a pet by its `petId` as follows:
+
+```
+$ http GET :8080/pet/1
+HTTP/1.1 200 OK
+
+{"petId":-543,"petName":"foo"}
+```
+
+Note however that we don't get back the same pet that we added! The
+specification isn't an implementation, and not rich enough to describe that if
+we add a pet with some id and then try to get a pet with the same id that we
+should get back the same pet[^1]...
+
+The way mocks work is that they accept requests with parameters of the right
+type and return randomly generated values of the right return type.
 
 ## Conclusion
 
-* We've seen how writing a specification for an existing system gives us testing 
+We've seen how writing a specification for an existing system gives us
+generative testing which can increase the coverage and find interesting
+sequences of requests that result in non-2xx respones or JSON parsing errors.
 
-* Mocking for new systems or third-party dependencies
+We've also had a look at how we can get a mocking for new systems or
+third-party dependencies from a specification, which can be useful in
+integration testing.
 
-* More uses of specifications, c.f. [motivation](motivation.html)
+Whether the server implementation or specification is written first doesn't
+really matter, but longer term we hope that writing the specification first
+will be helpful in developing the server (because it gives you tooling that
+could be useful in the development). For more (future) uses of specifications,
+see the [motivation](motivation.html) page.
 
 Next you might want to follow the [installation](install.html) instructions in
-order to start running Spex on your own.
+order to start running Spex on your own. Although keep in mind that Spex is
+still in alpha stage and not suitable for use on anything larger than toy
+examples, such as the petstore we've seen above.
 
-* Alpha...
 
+[^1]: One could imagine richer specifications that could describe this
+    relationship though. Future releases of Spex might add such functionality,
+    but for now it's not possible.
