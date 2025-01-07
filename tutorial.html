@@ -180,7 +180,7 @@ class="sourceCode shell"><code class="sourceCode shell"><span id="cb5-1"><a href
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  Total operations (ops): 100</span>
 <span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  Use --seed -7124542298296952417 to reproduce this run.</span></code></pre></div>
-<p>Let's go throught the output line by line.</p>
+<p>Let's go thought the output line by line.</p>
 <ol type="1">
 <li>First we are told which server is getting checked and against which
 specification. One thing to note here is that the default host is
@@ -189,12 +189,12 @@ specification. One thing to note here is that the default host is
 <li>That the specification is being checked is referring to it being
 parsed, scope- and type-checked;</li>
 <li>Before the tests start we make sure that the system under test is up
-and running by checking if a helathpoint endpoint is returning a 200
-response code. The health endpoint is assumed to be <code>/health</code>
-by default, but can be changed with the <code>--health</code> flag;</li>
+and running by checking if a health endpoint is returning a 200 response
+code. The health endpoint is assumed to be <code>/health</code> by
+default, but can be changed with the <code>--health</code> flag;</li>
 <li>The tests start, in this case we didn't find anything interesting.
 We can see that the test generated 49 <code>addPet</code> operations,
-which all succeded, and 51 <code>getPet</code> which all returned 404
+which all succeeded, and 51 <code>getPet</code> which all returned 404
 not found;</li>
 <li>We do see that <code>getPet</code> didn't get proper coverage
 properly, i.e. it always returned 404;</li>
@@ -208,7 +208,7 @@ cover <code>getPet</code>. Why is that? In order to explain this we need
 to understand how the testing works.</p>
 <h2 id="how-the-generative-testing-works">How the generative testing
 works</h2>
-<p>The way testing an implementaion against a specification works is by
+<p>The way testing an implementation against a specification works is by
 generative testing. If you've seen property-based testing or fuzzing
 before, then you'll hopefully find this familiar.</p>
 <p>The way the tests work is as follows:</p>
@@ -217,7 +217,7 @@ before, then you'll hopefully find this familiar.</p>
 or <code>addPet</code>;</li>
 <li>Generate random parameters for the operations, e.g. in the case of
 <code>getPet</code> the parameter is <code>petId</code> of type
-interger;</li>
+integer;</li>
 <li>Execute the operation against the implementation, i.e. make the HTTP
 request;</li>
 <li>Check if the response code is 2xx, if so go to 2, otherwise save the
@@ -299,7 +299,7 @@ class="sourceCode diff"><code class="sourceCode diff"><span id="cb8-1"><a href="
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  + addPet : POST /pet #Pet</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    getPet : GET /pet/{petId : @Int} -&gt; Pet</span></code></pre></div>
 <h2 id="mocking-apis">Mocking APIs</h2>
-<p>We've seen how to check that an existing system adhears to a
+<p>We've seen how to check that an existing system adheres to a
 specification.</p>
 <p>In order to show how a specification can be useful before the system
 is implemented, let's have a look at mocking.</p>
@@ -334,8 +334,8 @@ type.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>We've seen how writing a specification for an existing system gives
 us generative testing which can increase the coverage and find
-interesting sequences of requests that result in non-2xx respones or
-JSON parsing errors.</p>
+interesting sequences of requests that result in non-2xx responses, JSON
+parsing errors or unreachable endpoints.</p>
 <p>We've also had a look at how we can get a mocking for new systems or
 third-party dependencies from a specification, which can be useful in
 integration testing.</p>
