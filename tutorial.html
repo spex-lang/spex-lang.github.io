@@ -26,10 +26,335 @@
 </noscript>
 <main>
 <h1 id="tutorial">Tutorial</h1>
-<p>Coming soon.</p>
+<p>This tutorial is intended to get you started with writing your own
+Spex specifications. We'll cover all basic features of the specification
+language and explain how they interact with the toolkit via the
+<code>spex</code> command-line utility (which can be obtained following
+the installation <a href="install.html">instructions</a>).</p>
+<p>Before we start, let's discuss in what situations you might want to
+use <em>Spex</em> in the first place.</p>
+<h2 id="in-what-situations-is-spex-useful">In what situations is Spex
+useful?</h2>
+<p>Having a specification is useful for different reasons in different
+situations, here are a few:</p>
+<ul>
+<li><p>A new system is being developed, a specification is written
+and:</p>
+<ul>
+<li>A mock of the backend API is derived from the specification for
+frontend, so that the UI development can start without waiting for the
+functionality to be available;</li>
+<li>The same specification is used to test the API once done, if the
+tests pass it's likely that the two components will be compatible.</li>
+</ul></li>
+<li><p>An existing system is being maintained, a specification is
+written to:</p>
+<ul>
+<li>Document the system, perhaps for onboarding or documentation
+generation;</li>
+<li>Generate tests and potentially increase the test coverage;</li>
+<li>Since both the documentation and the tests are derived from the
+specification, we get some guarantees that the documentation isn't
+stale.</li>
+</ul></li>
+<li><p>A legacy system is being rewritten, a specification is used
+to:</p>
+<ul>
+<li>Document and test the old system;</li>
+<li>Develop and test the new system;</li>
+<li>Since both are tested against the same specification, we get some
+confidence that they will behave the same.</li>
+</ul></li>
+<li><p>An external system dependency, where the specification can be
+used to mock the dependency's API, so that it can be made part of the
+integration test suite.</p></li>
+</ul>
+<p>In this tutorial we'll try to give you an idea of how any of these
+scenarios can be done.</p>
+<h2 id="an-example-system-petstore">An example system: petstore</h2>
+<p>Spex isn't a programming language in the traditional sense. In
+particular the system we want write a specification for will need to be
+written in another language.</p>
+<p>Why? Well, <em>Spex</em> simply doesn't have the language features
+necessary to do normal programming.</p>
+<p>So let's start by writing a simple HTTP API server in Python using
+Flask.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flask <span class="im">import</span> Flask</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flask <span class="im">import</span> jsonify</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flask <span class="im">import</span> request</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> Flask(<span class="va">__name__</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: Not thread-safe and won&#39;t work if clients connect concurrently.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>petstore <span class="op">=</span> {}</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">@app.route</span>(<span class="st">&quot;/pet/&lt;pet_id&gt;&quot;</span>, methods<span class="op">=</span>[<span class="st">&quot;GET&quot;</span>])</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_pet(pet_id):</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pet_id <span class="kw">in</span> petstore:</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        pet_name <span class="op">=</span> petstore[pet_id]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jsonify(petId<span class="op">=</span>pet_id, petName<span class="op">=</span>pet_name)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jsonify(error<span class="op">=</span><span class="st">&quot;Pet not found&quot;</span>), <span class="dv">404</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="at">@app.route</span>(<span class="st">&quot;/pet&quot;</span>, methods<span class="op">=</span>[<span class="st">&quot;POST&quot;</span>])</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_pet():</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    pet_id <span class="op">=</span> request.json.get(<span class="st">&quot;petId&quot;</span>, <span class="va">None</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    pet_name <span class="op">=</span> request.json.get(<span class="st">&quot;petName&quot;</span>, <span class="va">None</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pet_id <span class="kw">in</span> petstore:</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jsonify(error<span class="op">=</span><span class="st">&quot;Pet already exists&quot;</span>), <span class="dv">409</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    petstore[pet_id] <span class="op">=</span> pet_name</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">&quot;[]&quot;</span>, <span class="dv">201</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="at">@app.route</span>(<span class="st">&quot;/health&quot;</span>, methods<span class="op">=</span>[<span class="st">&quot;GET&quot;</span>])</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> health():</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">&quot;[]&quot;</span>, <span class="dv">200</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="at">@app.route</span>(<span class="st">&quot;/_reset&quot;</span>, methods<span class="op">=</span>[<span class="st">&quot;DELETE&quot;</span>])</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _reset():</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    petstore.clear()</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">&quot;[]&quot;</span>, <span class="dv">200</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    app.run()</span></code></pre></div>
+<p>If we save the above into a file called <code>petstore.py</code>,
+then we can launch the server using
+<code>flask --app petstore run</code>. Once running we can add new pets
+as follows:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> http POST :5000/pet petId=1 petName=<span class="st">&quot;apa&quot;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">HTTP/1.1</span> 201 CREATED</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">[]</span></span></code></pre></div>
+<p>And look up pets by their id as follows:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> http GET :5000/pet/1</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">HTTP/1.1</span> 200 OK</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;petId&quot;</span><span class="ex">:</span> <span class="st">&quot;1&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;petName&quot;</span><span class="ex">:</span> <span class="st">&quot;apa&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<h2 id="first-basic-specification">First basic specification</h2>
+<p>One way to specify the above example is as follows:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode spex"><code class="sourceCode spex"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">component</span> PetStore <span class="kw">where</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>addPet <span class="ot">:</span> <span class="kw">POST</span> /pet Pet</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>getPet <span class="ot">:</span> <span class="kw">GET</span> /pet/<span class="ot">{</span>petId <span class="ot">:</span> <span class="dt">Int</span><span class="ot">}</span> <span class="ot">-&gt;</span> Pet</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> Pet =</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">{</span> petId   <span class="ot">:</span> <span class="dt">Int</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  , petName <span class="ot">:</span> <span class="dt">String</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">}</span></span></code></pre></div>
+<p>We can then verify that the implementation matches the specification
+as follows:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode shell"><code class="sourceCode shell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>$ spex verify --port 5000 example/petstore-basic.spex</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="in">i</span> Verifying the deployment:    http://localhost:5000</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  against the specification:   example/petstore-basic.spex</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="in">i</span> Checking the specification.</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="in">i</span> Waiting for health check to pass...</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="al">✓ </span>Health check passed!</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="in">i</span> Starting to run tests...</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="al">✓ </span>Done testing!</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  Found 0 intereresting test case.</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  Coverage:</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    2xx:</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>      49% addPet (49 ops)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    404:</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>      51% getPet (51 ops)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    Not covered (no non-404 responses):</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>      getPet</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  Total operations (ops): 100</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  Use --seed -7124542298296952417 to reproduce this run.</span></code></pre></div>
+<p>Let's go throught the output line by line.</p>
+<ol type="1">
+<li>First we are told which server is getting checked and against which
+specification. One thing to note here is that the default host is
+<code>localhost</code>, but it can be changed with the
+<code>--host</code> flag;</li>
+<li>That the specification is being checked is referring to it being
+parsed, scope- and type-checked;</li>
+<li>Before the tests start we make sure that the system under test is up
+and running by checking if a helathpoint endpoint is returning a 200
+response code. The health endpoint is assumed to be <code>/health</code>
+by default, but can be changed with the <code>--health</code> flag;</li>
+<li>The tests start, in this case we didn't find anything interesting.
+We can see that the test generated 49 <code>addPet</code> operations,
+which all succeded, and 51 <code>getPet</code> which all returned 404
+not found;</li>
+<li>We do see that <code>getPet</code> didn't get proper coverage
+properly, i.e. it always returned 404;</li>
+<li>Finally we are shown the seed used as basis for generating random
+operations. Note that we don't need to restart the server between test
+runs, it knows about the <code>_reset</code> endpoint and does the
+resets itself.</li>
+</ol>
+<p>So while we didn't get any interesting test failures, didn't properly
+cover <code>getPet</code>. Why is that? In order to explain this we need
+to understand how the testing works.</p>
+<h2 id="how-the-generative-testing-works">How the generative testing
+works</h2>
+<p>The way testing an implementaion against a specification works is by
+generative testing. If you've seen property-based testing or fuzzing
+before, then you'll hopefully find this familiar.</p>
+<p>The way the tests work is as follows:</p>
+<ol type="1">
+<li>Pick an operation from the specification, e.g. <code>getPet</code>
+or <code>addPet</code>;</li>
+<li>Generate random parameters for the operations, e.g. in the case of
+<code>getPet</code> the parameter is <code>petId</code> of type
+interger;</li>
+<li>Execute the operation against the implementation, i.e. make the HTTP
+request;</li>
+<li>Check if the response code is 2xx, if so go to 2, otherwise save the
+operation together with all preceding operations (these will minimised,
+or shrunk, and then presented as an interesting test case);</li>
+<li>Stop once we reached some amount of test cases, by default 100.</li>
+</ol>
+<p>Now we are in a position to answer why <code>getPet</code> wasn't
+covered. If we look at the specification for <code>getPet</code> we see
+that it takes a <code>petId</code> of type integer, and as we just said
+this <code>petId</code> parameter gets randomly generated. So, assuming
+that we are using 64 bit integers, we got <span
+class="math inline">2<sup>64</sup></span> values to pick from when
+generating an integer. That means that the chance of generating a random
+<code>petId</code> that has previously been generated during a
+<code>addPet</code> operation is small, and therefore we 404 all the
+time! Let's have a look at how we can fix this next.</p>
+<h2 id="abstract-type-modality">Abstract type modality</h2>
+<p>We've seen how by always generating new <code>petId</code>s we'll
+rarely call <code>getPet</code> with a <code>petId</code> that has
+previously been added via <code>addPet</code>.</p>
+<p>If only we could say something like "don't make up random
+<code>petId</code>, but rather reuse ones that you've seen already in
+previous operations"...</p>
+<p>Well as it so happens, there's a feature to do exactly that. It's
+called abstract modality, i.e. the random generation machinery should
+treat them as abstract and not try to generate them randomly.</p>
+<p>The syntax for saying that a type should be treated as abstract is
+the following:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode diff"><code class="sourceCode diff"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>$ diff -u example/petstore-basic.spex example/petstore-modal.spex</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  addPet : POST /pet Pet</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="st">- getPet : GET /pet/{petId : Int} -&gt; Pet</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="va">+ getPet : GET /pet/{petId : @Int} -&gt; Pet</span></span></code></pre></div>
+<p>The mnemonic being <code>@</code> looks like an "A", which is the
+first letter of abstract. If we run the tests again with this newly
+changed specification, we see the following:</p>
+<pre><code>✓ Done testing!
+
+  Found 0 intereresting test case.
+
+  Coverage:
+    2xx:
+      15% getPet (15 ops)
+      52% addPet (52 ops)
+    404:
+      33% getPet (33 ops)
+
+
+  Total operations (ops): 100
+
+  Use --seed 6320047119747240588 to reproduce this run.</code></pre>
+<p>Notice that we got fewer 404 errors now, because of the abstract
+(<code>@</code>) annotation on <code>petId</code>.</p>
+<p>How is this implemented? Basically any time we generate any value,
+e.g. a <code>petId</code> as part of an <code>addPet</code> operation,
+we store it in a "generation environment". If a type is annotated with
+the abstract modality, we'll reuse old values from the generation
+environment.</p>
+<p>Responses from operation also gets stored in the generation
+environment, and maybe be reused when generating subsequent
+operations.</p>
+<h2 id="unique-type-modality">Unique type modality</h2>
+<p>The abstract type modality ensure that values of the underlying type
+get reused, but what if we wanted to do the opposite -- enforce that
+values never get reused?</p>
+<p>This can be achieved with the unique type modality (<code>#</code>).
+The mnemonic being that "#" character is pronounced "hash" and
+(cryptographic) hashing functions uniquely identify its inputs.</p>
+<p>We've already seen an example of when this might be useful. If we try
+to add a pet with a pet id that already has been added we get a "409 Pet
+already exists" error, if we want to tell Spex to avoid generating add
+pet operations that result in conflicts, we can change the specification
+as follows:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode diff"><code class="sourceCode diff"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  $ diff -u example/petstore-basic.spex example/petstore-modal.spex</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  - addPet : POST /pet Pet</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  + addPet : POST /pet #Pet</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    getPet : GET /pet/{petId : @Int} -&gt; Pet</span></code></pre></div>
+<h2 id="mocking-apis">Mocking APIs</h2>
+<p>We've seen how to check that an existing system adhears to a
+specification.</p>
+<p>In order to show how a specification can be useful before the system
+is implemented, let's have a look at mocking.</p>
+<p>To start a mock server, use the <code>mock</code> subcommand:</p>
+<pre><code>$ spex mock example/petstore-basic.spex
+i Starting mock server on http://localhost:8080
+  Use --seed -684280361768894873 to reproduce this mock.</code></pre>
+<p>In another terminal, we can interact with the mock. For example we
+can pretend we are adding a new pet:</p>
+<pre><code>$ http POST :8080/pet petId=1 petName=&quot;apa&quot;
+HTTP/1.1 200 OK
+
+[]</code></pre>
+<p>Or pretend we are retrieving a pet by its <code>petId</code> as
+follows:</p>
+<pre><code>$ http GET :8080/pet/1
+HTTP/1.1 200 OK
+
+{&quot;petId&quot;:-543,&quot;petName&quot;:&quot;foo&quot;}</code></pre>
+<p>Note however that we don't get back the same pet that we added! The
+specification isn't an implementation, and not rich enough to describe
+that if we add a pet with some id and then try to get a pet with the
+same id that we should get back the same pet<a href="#fn1"
+class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>...</p>
+<p>The way mocks work is that they accept requests with parameters of
+the right type and return randomly generated values of the right return
+type.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>We've seen how writing a specification for an existing system gives
+us generative testing which can increase the coverage and find
+interesting sequences of requests that result in non-2xx respones or
+JSON parsing errors.</p>
+<p>We've also had a look at how we can get a mocking for new systems or
+third-party dependencies from a specification, which can be useful in
+integration testing.</p>
+<p>Whether the server implementation or specification is written first
+doesn't really matter, but longer term we hope that writing the
+specification first will be helpful in developing the server (because it
+gives you tooling that could be useful in the development). For more
+(future) uses of specifications, see the <a
+href="motivation.html">motivation</a> page.</p>
 <p>Next you might want to follow the <a
 href="install.html">installation</a> instructions in order to start
-running Spex on your own.</p>
+running Spex on your own. Although keep in mind that Spex is still in
+alpha stage and not suitable for use on anything larger than toy
+examples, such as the petstore we've seen above.</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>One could imagine richer specifications that could
+describe this relationship though. Future releases of Spex might add
+such functionality, but for now it's not possible.<a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 </main>
 </body>
 </html>
