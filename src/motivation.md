@@ -47,7 +47,7 @@ Before we can start talking about the shortcomings of current specification
 languages, it's helpful to first break down Joe's red arrow. It actually has
 three components:
 
-  1. The interface of the blackbox (the API), i.e. what messages the component
+  1. The interface of the black-box (the API), i.e. what messages the component
      accepts;
   2. The encoding of the messages, i.e. what bytes (or bits) are sent over the
      communication channel;
@@ -61,14 +61,14 @@ In the latter of the above mentioned talks, Joe gives an example where merely
 knowing the API isn't good enough. The example he gives is the POSIX filesystem
 API:
 
-  * `open`: takes a filepath and returns a file descriptor;
+  * `open`: takes a file path and returns a file descriptor;
   * `write`: takes a file descriptor and string and returns how many bytes it
     successfully wrote;
   * `close`: takes a file descriptor and closes it, thus freeing up resources.
 
 Nothing in the API says, for example, that we can't continue writing to a file
 descriptor that has been closed! This is where protocols come in, saying for
-example that we can only write to a file descritor that is open, etc.
+example that we can only write to a file descriptor that is open, etc.
 
 One last point to note is that APIs can be synchronous or asynchronous, as in
 the client of the API gets a response back immediately upon making the call or
@@ -103,13 +103,13 @@ There's one exception which supports specifying all three aspects and that's
 Joe's [Universal Binary Format](https://erlang.org/workshop/2002/Armstrong.pdf)
 (2002), it seems to have been largely forgotten about though.
 
-* Syntax for specifing sync and async APIs? 
+* Syntax for specifying synchronous and asynchronous APIs? 
   - gRPC can do this, but again only for gRPC systems...
   - https://www.asyncapi.com/en
 
 ### Syntax and tooling
 
-In addition to the aspets of what you can specify, it's also important to
+In addition to the aspects of what you can specify, it's also important to
 consider how pleasant it's to read and write such specifications and what you
 can do with them -- i.e. what tooling is available once we have a
 specification.
@@ -140,7 +140,7 @@ Why would one want to specify an existing system? There could be many reasons:
   1. To document the system and have tooling which generates documentation from
      the specification;
   2. To use the specification as a blueprint for a rewrite, i.e. specify the
-     old system, test it the specification agains the old system to ensure it's
+     old system, test it the specification against the old system to ensure it's
      correct, then use the specification to develop the new system, potentially
      generating code from the specification, and finally testing the new system
      against the specification to ensure that it behaves like the old system;
@@ -152,7 +152,7 @@ Ok that was a lot about tooling, let's just finish off on a lighter note by
 talking about syntax.
 
 OpenAPI specifications are written in JSON or YAML, which verbose and hard to
-read. Just like the world is slowly realsing that these formats are bad for
+read. Just like the world is slowly realising that these formats are bad for
 configuration, due to not being well-specified and lacking abstraction
 abilities, it seems that slowly people are realising that for the same reasons
 JSON or YAML are also bad specification languages.
@@ -170,7 +170,7 @@ system they intend to specify indeed behaves according to the specification.
 
 At this point it's also worth mentioning the relationship to property-based testing.
 
-When property-based testing is used to do blackbox testing of a stateful API,
+When property-based testing is used to do black-box testing of a stateful API,
 then the property is a specification. Given that every programming language has
 its own slightly different implementation property-based testing, this means
 that we have (at least) one specification language per programming language.
@@ -208,7 +208,7 @@ we'd like to have in *Spex*:
     Pandoc can covert between text formats, perhaps we can do the same between
     specifications;
   - Lua templating (again similar to Pandoc) which enables code generation from
-    specifications or the minimal test cases that the verifer produces.
+    specifications or the minimal test cases that the verifier produces.
 
 This would bring *Spex* on par with existing solutions, especially considering
 one can always export to OpenAPI and use their tooling as a fallback option.
@@ -219,7 +219,7 @@ by:
 * Allowing for more complete specifications, than OpenAPI, by having syntax for
   both synchronous and asynchronous APIs;
 * Adding syntax for specifying protocols, i.e. valid sequences of API calls,
-  thereby addressing Joe's critisism;
+  thereby addressing Joe's criticism;
 * A contract checker, i.e. a component/proxy which sits between two component
   and checks that they follow the protocol at run-time, again inspired by Joe's
   work.
@@ -241,7 +241,7 @@ unified tooling that coevolves with the syntax, e.g.:
 * Model definitions -- fakes rather than mocks and better fuzzing;
 * BNF syntax for describing context-free grammars -- and generators that can
   use this to generate structured data;
-* Literate Spex -- to make it easier to embed specifiations and the output that
+* Literate Spex -- to make it easier to embed specifications and the output that
   can be produced from them straight into documentation itself.
 
 It's hard to imagine what trying to add these things to e.g. OpenAPI even would
@@ -261,7 +261,7 @@ Here are some ideas of possible syntax and tooling extensions:
 * OpenAPI and Protobuf describe the interface of one machine, but what about
   the topology? I.e. which machine talks to which machine? These more complete
   system specifications open up the potential for other kinds of tooling:
-    + Linters that ensures global consistancy;
+    + Linters that ensures global consistency;
     + More complete documentation with diagrams for visualising how components
       are connected;
     + Generation of deployment related code;

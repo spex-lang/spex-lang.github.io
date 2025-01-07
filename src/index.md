@@ -22,7 +22,7 @@ type Pet =
   }
 ```
 
-The verifer takes a specification and an URL and checks if the server behind
+The verifier takes a specification and an URL and checks if the server behind
 the URL respects the specification. In particular the verifier looks for:
 
   * Minimal test cases that give rise to non-2xx responses, or; 
@@ -79,7 +79,7 @@ i Starting to run tests...
 ```
 
 Note that the server running on `http://localhost:8080` needs to be written in
-another language and be deployed, before the Spex verifer is run.
+another language and be deployed, before the Spex verifier is run.
 
 For an introduction to how the above works in more detail, please see the
 [tutorial](tutorial.html).

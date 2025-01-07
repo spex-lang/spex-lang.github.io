@@ -167,7 +167,7 @@ i Starting to run tests...
   Use --seed -7124542298296952417 to reproduce this run.
 ```
 
-Let's go throught the output line by line. 
+Let's go thought the output line by line. 
 
   1. First we are told which server is getting checked and against which
      specification. One thing to note here is that the default host is
@@ -175,11 +175,11 @@ Let's go throught the output line by line.
   2. That the specification is being checked is referring to it being parsed,
      scope- and type-checked;
   3. Before the tests start we make sure that the system under test is up and
-     running by checking if a helathpoint endpoint is returning a 200 response
+     running by checking if a health endpoint is returning a 200 response
      code. The health endpoint is assumed to be `/health` by default, but can
      be changed with the `--health` flag;
   4. The tests start, in this case we didn't find anything interesting. We can
-     see that the test generated 49 `addPet` operations, which all succeded, and
+     see that the test generated 49 `addPet` operations, which all succeeded, and
      51 `getPet` which all returned 404 not found;
   5. We do see that `getPet` didn't get proper coverage properly, i.e. it
      always returned 404;
@@ -193,7 +193,7 @@ testing works.
 
 ## How the generative testing works
 
-The way testing an implementaion against a specification works is by generative
+The way testing an implementation against a specification works is by generative
 testing. If you've seen property-based testing or fuzzing before, then you'll
 hopefully find this familiar.
 
@@ -201,7 +201,7 @@ The way the tests work is as follows:
 
   1. Pick an operation from the specification, e.g. `getPet` or `addPet`;
   2. Generate random parameters for the operations, e.g. in the case of
-     `getPet` the parameter is `petId` of type interger;
+     `getPet` the parameter is `petId` of type integer;
   3. Execute the operation against the implementation, i.e. make the HTTP
      request;
   4. Check if the response code is 2xx, if so go to 2, otherwise save the
@@ -296,7 +296,7 @@ result in conflicts, we can change the specification as follows:
 
 ## Mocking APIs
 
-We've seen how to check that an existing system adhears to a specification.
+We've seen how to check that an existing system adheres to a specification.
 
 In order to show how a specification can be useful before the system is
 implemented, let's have a look at mocking.
@@ -340,7 +340,8 @@ type and return randomly generated values of the right return type.
 
 We've seen how writing a specification for an existing system gives us
 generative testing which can increase the coverage and find interesting
-sequences of requests that result in non-2xx respones or JSON parsing errors.
+sequences of requests that result in non-2xx responses, JSON parsing errors or
+unreachable endpoints.
 
 We've also had a look at how we can get a mocking for new systems or
 third-party dependencies from a specification, which can be useful in

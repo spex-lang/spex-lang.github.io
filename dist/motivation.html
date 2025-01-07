@@ -65,7 +65,7 @@ difference between APIs, encoding and protocols</h2>
 specification languages, it's helpful to first break down Joe's red
 arrow. It actually has three components:</p>
 <ol type="1">
-<li>The interface of the blackbox (the API), i.e. what messages the
+<li>The interface of the black-box (the API), i.e. what messages the
 component accepts;</li>
 <li>The encoding of the messages, i.e. what bytes (or bits) are sent
 over the communication channel;</li>
@@ -78,7 +78,7 @@ difference between APIs and protocols.</p>
 where merely knowing the API isn't good enough. The example he gives is
 the POSIX filesystem API:</p>
 <ul>
-<li><code>open</code>: takes a filepath and returns a file
+<li><code>open</code>: takes a file path and returns a file
 descriptor;</li>
 <li><code>write</code>: takes a file descriptor and string and returns
 how many bytes it successfully wrote;</li>
@@ -87,7 +87,7 @@ freeing up resources.</li>
 </ul>
 <p>Nothing in the API says, for example, that we can't continue writing
 to a file descriptor that has been closed! This is where protocols come
-in, saying for example that we can only write to a file descritor that
+in, saying for example that we can only write to a file descriptor that
 is open, etc.</p>
 <p>One last point to note is that APIs can be synchronous or
 asynchronous, as in the client of the API gets a response back
@@ -124,7 +124,7 @@ href="https://erlang.org/workshop/2002/Armstrong.pdf">Universal Binary
 Format</a> (2002), it seems to have been largely forgotten about
 though.</p>
 <ul>
-<li>Syntax for specifing sync and async APIs?
+<li>Syntax for specifying synchronous and asynchronous APIs?
 <ul>
 <li>gRPC can do this, but again only for gRPC systems...</li>
 <li><a
@@ -132,7 +132,7 @@ href="https://www.asyncapi.com/en">https://www.asyncapi.com/en</a></li>
 </ul></li>
 </ul>
 <h3 id="syntax-and-tooling">Syntax and tooling</h3>
-<p>In addition to the aspets of what you can specify, it's also
+<p>In addition to the aspects of what you can specify, it's also
 important to consider how pleasant it's to read and write such
 specifications and what you can do with them -- i.e. what tooling is
 available once we have a specification.</p>
@@ -163,7 +163,7 @@ reasons:</p>
 <li>To document the system and have tooling which generates
 documentation from the specification;</li>
 <li>To use the specification as a blueprint for a rewrite, i.e. specify
-the old system, test it the specification agains the old system to
+the old system, test it the specification against the old system to
 ensure it's correct, then use the specification to develop the new
 system, potentially generating code from the specification, and finally
 testing the new system against the specification to ensure that it
@@ -176,7 +176,7 @@ contract tests.</li>
 <p>Ok that was a lot about tooling, let's just finish off on a lighter
 note by talking about syntax.</p>
 <p>OpenAPI specifications are written in JSON or YAML, which verbose and
-hard to read. Just like the world is slowly realsing that these formats
+hard to read. Just like the world is slowly realising that these formats
 are bad for configuration, due to not being well-specified and lacking
 abstraction abilities, it seems that slowly people are realising that
 for the same reasons JSON or YAML are also bad specification
@@ -192,7 +192,7 @@ that the system they intend to specify indeed behaves according to the
 specification.</p>
 <p>At this point it's also worth mentioning the relationship to
 property-based testing.</p>
-<p>When property-based testing is used to do blackbox testing of a
+<p>When property-based testing is used to do black-box testing of a
 stateful API, then the property is a specification. Given that every
 programming language has its own slightly different implementation
 property-based testing, this means that we have (at least) one
@@ -229,7 +229,7 @@ of how Pandoc can covert between text formats, perhaps we can do the
 same between specifications;</li>
 <li>Lua templating (again similar to Pandoc) which enables code
 generation from specifications or the minimal test cases that the
-verifer produces.</li>
+verifier produces.</li>
 </ul></li>
 </ul>
 <p>This would bring <em>Spex</em> on par with existing solutions,
@@ -241,7 +241,7 @@ shortcomings by:</p>
 <li>Allowing for more complete specifications, than OpenAPI, by having
 syntax for both synchronous and asynchronous APIs;</li>
 <li>Adding syntax for specifying protocols, i.e. valid sequences of API
-calls, thereby addressing Joe's critisism;</li>
+calls, thereby addressing Joe's criticism;</li>
 <li>A contract checker, i.e. a component/proxy which sits between two
 component and checks that they follow the protocol at run-time, again
 inspired by Joe's work.</li>
@@ -265,7 +265,7 @@ e.g.:</p>
 fuzzing;</li>
 <li>BNF syntax for describing context-free grammars -- and generators
 that can use this to generate structured data;</li>
-<li>Literate Spex -- to make it easier to embed specifiations and the
+<li>Literate Spex -- to make it easier to embed specifications and the
 output that can be produced from them straight into documentation
 itself.</li>
 </ul>
@@ -284,7 +284,7 @@ about the topology? I.e. which machine talks to which machine? These
 more complete system specifications open up the potential for other
 kinds of tooling:
 <ul>
-<li>Linters that ensures global consistancy;</li>
+<li>Linters that ensures global consistency;</li>
 <li>More complete documentation with diagrams for visualising how
 components are connected;</li>
 <li>Generation of deployment related code;</li>
