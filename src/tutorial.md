@@ -243,7 +243,7 @@ The mnemonic being `@` looks like an "A", which is the first letter of
 abstract. If we run the tests again with this newly changed specification, we
 see the following:
 
-```
+```shell
 ✓ Done testing!
 
   Found 0 intereresting test case.
@@ -303,7 +303,7 @@ implemented, let's have a look at mocking.
 
 To start a mock server, use the `mock` subcommand:
 
-```
+```shell
 $ spex mock example/petstore-basic.spex
 i Starting mock server on http://localhost:8080
   Use --seed -684280361768894873 to reproduce this mock.
@@ -312,7 +312,7 @@ i Starting mock server on http://localhost:8080
 In another terminal, we can interact with the mock. For example we can pretend
 we are adding a new pet:
 
-```
+```bash
 $ http POST :8080/pet petId=1 petName="apa"
 HTTP/1.1 200 OK
 
@@ -321,7 +321,7 @@ HTTP/1.1 200 OK
 
 Or pretend we are retrieving a pet by its `petId` as follows:
 
-```
+```bash
 $ http GET :8080/pet/1
 HTTP/1.1 200 OK
 

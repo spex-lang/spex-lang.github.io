@@ -87,7 +87,7 @@ body {
     line-height: 1.6;
     /* font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif; */
     font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: normal;
     margin-left: auto;
     margin-right: auto;
@@ -95,15 +95,14 @@ body {
 }
 
 header {
-    margin-top: 5ch;
-    margin-bottom: 5ch;
+    margin-top: 2ch;
+    margin-bottom: 0ch;
     font-size: 20px;
     /* font-weight: bold; */
     /* font-family: sans-serif; */
     font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
-    background-color: lightcyan;
-    padding: 5px;
-    border-radius: 8px;
+    padding: 0px;
+    border-radius: 0px;
 }
 
 header a:link {
@@ -167,12 +166,16 @@ h3 {
     line-height: 1;
 }
 
-code, pre > code {
+.sourceCode {
     background-color: #2e2e2e;
-    color: white;
-    border: 1px;
     border-radius: 8px;
-    padding: 1ch;
+    padding: 5px;
+    color: white;
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+code, pre > code {
+    border: 1px;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
     font-size: 1.0rem; 
     line-height: 1.42; 

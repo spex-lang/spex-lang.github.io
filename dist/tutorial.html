@@ -20,6 +20,7 @@
     <a href="https://github.com/spex-lang/spex">Code</a>
   </div>
 </header>
+<hr>
 <noscript>
   <img src="https://spex-lang.goatcounter.com/count?t=Tutorial+-+Spex"
        alt="goatcounter">
@@ -254,21 +255,22 @@ class="sourceCode diff"><code class="sourceCode diff"><span id="cb6-1"><a href="
 <p>The mnemonic being <code>@</code> looks like an "A", which is the
 first letter of abstract. If we run the tests again with this newly
 changed specification, we see the following:</p>
-<pre><code>✓ Done testing!
-
-  Found 0 intereresting test case.
-
-  Coverage:
-    2xx:
-      15% getPet (15 ops)
-      52% addPet (52 ops)
-    404:
-      33% getPet (33 ops)
-
-
-  Total operations (ops): 100
-
-  Use --seed 6320047119747240588 to reproduce this run.</code></pre>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode shell"><code class="sourceCode shell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="an">✓ </span>Done testing!</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  Found 0 intereresting test case.</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  Coverage:</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    2xx:</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      15% getPet (15 ops)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      52% addPet (52 ops)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    404:</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      33% getPet (33 ops)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  Total operations (ops): 100</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  Use --seed 6320047119747240588 to reproduce this run.</span></code></pre></div>
 <p>Notice that we got fewer 404 errors now, because of the abstract
 (<code>@</code>) annotation on <code>petId</code>.</p>
 <p>How is this implemented? Basically any time we generate any value,
@@ -302,21 +304,24 @@ specification.</p>
 <p>In order to show how a specification can be useful before the system
 is implemented, let's have a look at mocking.</p>
 <p>To start a mock server, use the <code>mock</code> subcommand:</p>
-<pre><code>$ spex mock example/petstore-basic.spex
-i Starting mock server on http://localhost:8080
-  Use --seed -684280361768894873 to reproduce this mock.</code></pre>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode shell"><code class="sourceCode shell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>$ spex mock example/petstore-basic.spex</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="in">i</span> Starting mock server on http://localhost:8080</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  Use --seed -684280361768894873 to reproduce this mock.</span></code></pre></div>
 <p>In another terminal, we can interact with the mock. For example we
 can pretend we are adding a new pet:</p>
-<pre><code>$ http POST :8080/pet petId=1 petName=&quot;apa&quot;
-HTTP/1.1 200 OK
-
-[]</code></pre>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> http POST :8080/pet petId=1 petName=<span class="st">&quot;apa&quot;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">HTTP/1.1</span> 200 OK</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ex">[]</span></span></code></pre></div>
 <p>Or pretend we are retrieving a pet by its <code>petId</code> as
 follows:</p>
-<pre><code>$ http GET :8080/pet/1
-HTTP/1.1 200 OK
-
-{&quot;petId&quot;:-543,&quot;petName&quot;:&quot;foo&quot;}</code></pre>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> http GET :8080/pet/1</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">HTTP/1.1</span> 200 OK</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="dt">{</span><span class="st">&quot;petId&quot;</span><span class="dt">:-543</span><span class="op">,</span><span class="st">&quot;petName&quot;</span><span class="dt">:</span><span class="st">&quot;foo&quot;</span><span class="dt">}</span></span></code></pre></div>
 <p>Note however that we don't get back the same pet that we added! The
 specification isn't an implementation, and not rich enough to describe
 that if we add a pet with some id and then try to get a pet with the

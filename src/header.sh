@@ -27,6 +27,7 @@ cat <<EOT
     <a href="https://github.com/spex-lang/spex">Code</a>
   </div>
 </header>
+<hr>
 <noscript>
   <img src="https://spex-lang.goatcounter.com/count?t=$escaped_title"
        alt="goatcounter">
